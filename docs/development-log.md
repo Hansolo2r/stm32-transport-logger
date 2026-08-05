@@ -347,3 +347,11 @@
 - Automation: `.github/workflows/pages.yml` uploads only `docs/mobile-app` on each push to `main`, so future dashboard changes automatically replace the fixed HTTPS site without requiring the development PC to stay online.
 - Deployment validation: the first workflow run occurred before Pages enablement and failed at `configure-pages`. After enabling workflow-based Pages and rerunning, all checkout, configuration, upload, and deployment steps passed. A separate public request returned HTTP 200 with `text/html; charset=utf-8`.
 - iPhone usage: open the fixed HTTPS address inside Bluefy because iOS Safari does not expose Web Bluetooth. The GitHub Pages origin is stable; it does not depend on the local Python server or Cloudflare tunnel process.
+
+## 2026-08-05 - Mixed-generation RTC chart axis fix
+
+- Observed issue: the temperature chart enabled its real-time x-axis only when every previewed temperature record had an RTC timestamp. Existing Flash commonly contains pre-RTC records, so mixing old and new records incorrectly hid the real-time labels.
+- Parsing behavior: the chart now selects all valid timestamped temperature records when at least two are available. Old compatible records remain visible in the table but no longer force new RTC chart data back to record-order mode.
+- Axis presentation: added a visible horizontal baseline, increased the chart height from 210 to 230 pixels, reserved bottom label space, and displays approximate labels as `MM-DD HH:MM` without seconds.
+- Browser validation: a mixed preview containing two `NA` legacy timestamps and two valid RTC timestamps rendered `08-05 12:05` and `08-05 12:18` at both 390 x 844 and 1440 x 900. Both sizes had zero console errors, zero horizontal overflow, and nonblank canvas pixels.
+- Firmware and CubeMX impact: none. This correction affects only the mobile dashboard and requires no board reflash.

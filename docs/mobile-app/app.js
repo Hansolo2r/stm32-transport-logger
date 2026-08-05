@@ -438,7 +438,11 @@ function drawTemperatureChart() {
   const rect = canvas.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
   const width = Math.max(280, rect.width);
-  const height = 210;
+  const height = 230;
+  const plotLeft = 46;
+  const plotRight = width - 14;
+  const plotTop = 28;
+  const plotBottom = 170;
   canvas.width = width * dpr;
   canvas.height = height * dpr;
   const ctx = canvas.getContext("2d");
@@ -446,36 +450,50 @@ function drawTemperatureChart() {
   ctx.clearRect(0, 0, width, height);
   ctx.strokeStyle = "#e3e7ea";
   ctx.lineWidth = 1;
-  for (let i = 0; i < 4; i++) { const y = 22 + i * 45; ctx.beginPath(); ctx.moveTo(42, y); ctx.lineTo(width - 12, y); ctx.stroke(); }
-  const points = recentRecords.filter((item) => Number.isFinite(item.temp) && item.temp > -100);
+  for (let i = 0; i < 4; i++) {
+    const y = plotTop + i * ((plotBottom - plotTop) / 3);
+    ctx.beginPath(); ctx.moveTo(plotLeft, y); ctx.lineTo(plotRight, y); ctx.stroke();
+  }
+  ctx.strokeStyle = "#aeb7bf";
+  ctx.beginPath(); ctx.moveTo(plotLeft, plotBottom); ctx.lineTo(plotRight, plotBottom); ctx.stroke();
+
+  const allPoints = recentRecords.filter((item) => Number.isFinite(item.temp) && item.temp > -100);
+  const timestampedPoints = allPoints.map((item) => ({
+    ...item,
+    timestampMs: item.timestamp ? new Date(item.timestamp.replace(" ", "T")).getTime() : NaN
+  })).filter((item) => Number.isFinite(item.timestampMs));
+  const timestamped = timestampedPoints.length >= 2;
+  const points = timestamped ? timestampedPoints : allPoints;
   const values = points.map((item) => item.temp);
   if (values.length < 2) { ctx.fillStyle = "#7b858f"; ctx.font = "13px sans-serif"; ctx.fillText("读取记录后显示温度曲线", 54, 100); return; }
   const min = Math.min(...values), max = Math.max(...values), span = Math.max(1, max - min);
-  const timestamped = points.every((item) => item.timestamp);
-  const times = timestamped ? points.map((item) => new Date(item.timestamp.replace(" ", "T")).getTime()) : [];
+  const times = timestamped ? points.map((item) => item.timestampMs) : [];
   const firstTime = timestamped ? Math.min(...times) : 0;
   const lastTime = timestamped ? Math.max(...times) : 0;
   const timeSpan = Math.max(1, lastTime - firstTime);
   ctx.fillStyle = "#66717e"; ctx.font = "11px sans-serif";
-  ctx.fillText(`${max.toFixed(1)}°`, 5, 28); ctx.fillText(`${min.toFixed(1)}°`, 5, 166);
+  ctx.fillText(`${max.toFixed(1)}°`, 5, plotTop + 4); ctx.fillText(`${min.toFixed(1)}°`, 5, plotBottom + 4);
   ctx.strokeStyle = "#176b55"; ctx.lineWidth = 2; ctx.beginPath();
   points.forEach((point, index) => {
     const ratio = timestamped && lastTime > firstTime ? (times[index] - firstTime) / timeSpan : index / (points.length - 1);
-    const x = 42 + ratio * (width - 58);
+    const x = plotLeft + ratio * (plotRight - plotLeft);
     const value = point.temp;
-    const y = 158 - (value - min) / span * 126;
+    const y = plotBottom - (value - min) / span * (plotBottom - plotTop);
     if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
   });
   ctx.stroke();
-  ctx.fillStyle = "#66717e";
+  ctx.fillStyle = "#59636f";
+  ctx.font = "12px sans-serif";
   if (timestamped) {
     const firstLabel = points[0].timestamp.slice(5, 16);
     const lastLabel = points[points.length - 1].timestamp.slice(5, 16);
-    ctx.fillText(firstLabel, 42, 191);
-    const labelWidth = ctx.measureText(lastLabel).width;
-    ctx.fillText(lastLabel, width - 16 - labelWidth, 191);
+    ctx.textAlign = "left";
+    ctx.fillText(firstLabel, plotLeft, 207);
+    ctx.textAlign = "right";
+    ctx.fillText(lastLabel, plotRight, 207);
+    ctx.textAlign = "start";
   } else {
-    ctx.fillText("旧记录：按会话内顺序显示", 42, 191);
+    ctx.fillText("旧记录：按会话内顺序显示", plotLeft, 207);
   }
 }
 
