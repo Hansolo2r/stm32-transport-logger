@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200">
+  <defs>
+    <marker id="arrOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#d76a1f"/></marker>
+    <marker id="arrRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#d63f3f"/></marker>
+    <marker id="arrBlack" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker>
+    <filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.2"/></filter>
+    <style>
+      text{font-family:"Microsoft YaHei","Segoe UI",sans-serif;fill:#172026;letter-spacing:0}.title{font-size:38px;font-weight:700}.subtitle{font-size:20px;fill:#4b5860}
+      .box{stroke-width:3;filter:url(#shadow)}.bt{font-size:23px;font-weight:700}.bn{font-size:17px}.section{font-size:25px;font-weight:700}
+      .wireO{stroke:#d76a1f;stroke-width:8;fill:none;marker-end:url(#arrOrange)}.wireR{stroke:#d63f3f;stroke-width:8;fill:none;marker-end:url(#arrRed)}.wireB{stroke:#222;stroke-width:8;fill:none;marker-end:url(#arrBlack)}
+      .thinR{stroke:#d63f3f;stroke-width:5;fill:none}.thinB{stroke:#222;stroke-width:5;fill:none}.label{font-size:17px;font-weight:700}.note{font-size:18px}.small{font-size:15px}.white{fill:#fff}
+    </style>
+  </defs>
+  <rect width="1800" height="1200" fill="#f5f7f8"/>
+  <text x="70" y="62" class="title">最终电源接线图：电池、充电、开关、稳压与电源轨</text>
+  <text x="70" y="99" class="subtitle">先只搭这一页并用万用表确认 3.3V，确认无误后才能接 STM32 和其他模块。</text>
+
+  <!-- Power chain -->
+  <rect class="box" x="80" y="165" width="250" height="175" rx="12" fill="#3c6d59" stroke="#28503f"/>
+  <text x="205" y="215" text-anchor="middle" class="bt white">3.7V锂电池</text>
+  <text x="205" y="251" text-anchor="middle" class="bn white">400mAh</text>
+  <circle cx="310" cy="290" r="13" fill="#d76a1f" stroke="#fff" stroke-width="3"/><text x="273" y="296" class="label white">+</text>
+  <circle cx="310" cy="320" r="13" fill="#222" stroke="#fff" stroke-width="3"/><text x="273" y="326" class="label white">−</text>
+
+  <rect class="box" x="465" y="145" width="310" height="215" rx="12" fill="#b75d43" stroke="#8c3f29"/>
+  <text x="620" y="190" text-anchor="middle" class="bt white">小电流锂充模块</text>
+  <text x="620" y="224" text-anchor="middle" class="bn white">Type-C 5V输入</text>
+  <circle cx="485" cy="290" r="13" fill="#d76a1f" stroke="#fff" stroke-width="3"/><text x="510" y="296" class="label white">B+</text>
+  <circle cx="485" cy="320" r="13" fill="#222" stroke="#fff" stroke-width="3"/><text x="510" y="326" class="label white">B−</text>
+  <circle cx="755" cy="270" r="13" fill="#d76a1f" stroke="#fff" stroke-width="3"/><text x="670" y="276" class="label white">OUT+</text>
+  <circle cx="755" cy="325" r="13" fill="#222" stroke="#fff" stroke-width="3"/><text x="670" y="331" class="label white">OUT−</text>
+  <text x="620" y="350" text-anchor="middle" class="small white">焊盘位置必须以收到的实物丝印为准</text>
+
+  <path d="M323 290 H472" class="wireO"/><path d="M323 320 H472" class="wireB"/>
+
+  <rect class="box" x="905" y="165" width="245" height="175" rx="12" fill="#484d51" stroke="#272b2e"/>
+  <text x="1027" y="207" text-anchor="middle" class="bt white">SS12D10开关</text>
+  <circle cx="930" cy="270" r="14" fill="#d76a1f" stroke="#fff" stroke-width="3"/><text x="927" y="242" text-anchor="middle" class="label white">外脚</text>
+  <circle cx="1027" cy="270" r="14" fill="#d76a1f" stroke="#fff" stroke-width="3"/><text x="1027" y="242" text-anchor="middle" class="label white">中脚</text>
+  <circle cx="1124" cy="270" r="14" fill="#91999d" stroke="#fff" stroke-width="3"/><text x="1124" y="242" text-anchor="middle" class="label white">外脚</text>
+  <line x1="930" y1="270" x2="1027" y2="270" stroke="#f4c451" stroke-width="8"/>
+  <text x="1027" y="313" text-anchor="middle" class="bn white">只用左外脚+中脚</text>
+  <text x="1124" y="313" text-anchor="middle" class="small white">留空</text>
+
+  <path d="M768 270 H892" class="wireO"/>
+
+  <rect class="box" x="1270" y="145" width="285" height="215" rx="12" fill="#8a663e" stroke="#664820"/>
+  <text x="1412" y="192" text-anchor="middle" class="bt white">TPS63020</text>
+  <circle cx="1290" cy="270" r="13" fill="#d76a1f" stroke="#fff" stroke-width="3"/><text x="1316" y="276" class="label white">VIN+</text>
+  <circle cx="1290" cy="325" r="13" fill="#222" stroke="#fff" stroke-width="3"/><text x="1316" y="331" class="label white">VIN−</text>
+  <circle cx="1535" cy="270" r="13" fill="#d63f3f" stroke="#fff" stroke-width="3"/><text x="1430" y="276" class="label white">VOUT+ 3.3V</text>
+  <circle cx="1535" cy="325" r="13" fill="#222" stroke="#fff" stroke-width="3"/><text x="1445" y="331" class="label white">VOUT−</text>
+  <text x="1412" y="351" text-anchor="middle" class="small white">接负载前先用万用表调到3.3V</text>
+
+  <path d="M1040 270 H1257" class="wireO"/>
+  <path d="M768 325 H1257" class="wireB"/>
+
+  <rect class="box" x="1635" y="180" width="125" height="145" rx="12" fill="#fff" stroke="#68747a"/>
+  <text x="1697" y="220" text-anchor="middle" class="bt">3.3V</text>
+  <text x="1697" y="252" text-anchor="middle" class="bn">电源轨</text>
+  <line x1="1655" y1="280" x2="1739" y2="280" stroke="#d63f3f" stroke-width="7"/>
+  <line x1="1655" y1="305" x2="1739" y2="305" stroke="#222" stroke-width="7"/>
+  <path d="M1548 270 H1622" class="wireR"/><path d="M1548 325 H1600 V305 H1622" class="wireB"/>
+
+  <!-- Conditional charger note -->
+  <rect x="80" y="395" width="1680" height="105" rx="9" fill="#fff0e7" stroke="#bd5a31" stroke-width="3"/>
+  <text x="105" y="430" class="label" fill="#7d2d0e">锂充板到货后先看丝印：</text>
+  <text x="105" y="463" class="note">有 OUT+/OUT−：按图连接。只有 B+/B−：开关外脚接 B+，TPS VIN−接 B−；不要凭商品图猜焊盘位置。</text>
+  <text x="105" y="490" class="small">电池正负极接反、TPS输出未调好或焊锡短路都会损坏模块。首次上电时不要连接STM32。</text>
+
+  <!-- Rail bridge diagram -->
+  <text x="80" y="555" class="section">面包板电源轨：共需要6根跨接线</text>
+  <rect x="80" y="590" width="1680" height="380" rx="14" fill="#f4f3ec" stroke="#929ba0" stroke-width="4"/>
+  <line x1="120" y1="650" x2="840" y2="650" stroke="#d63f3f" stroke-width="9"/>
+  <line x1="920" y1="650" x2="1720" y2="650" stroke="#d63f3f" stroke-width="9"/>
+  <line x1="120" y1="700" x2="840" y2="700" stroke="#222" stroke-width="9"/>
+  <line x1="920" y1="700" x2="1720" y2="700" stroke="#222" stroke-width="9"/>
+  <line x1="120" y1="850" x2="840" y2="850" stroke="#d63f3f" stroke-width="9"/>
+  <line x1="920" y1="850" x2="1720" y2="850" stroke="#d63f3f" stroke-width="9"/>
+  <line x1="120" y1="900" x2="840" y2="900" stroke="#222" stroke-width="9"/>
+  <line x1="920" y1="900" x2="1720" y2="900" stroke="#222" stroke-width="9"/>
+  <rect x="850" y="610" width="60" height="320" fill="#d9dcd9"/>
+  <text x="980" y="947" class="small">轨道中点原本不通</text>
+
+  <!-- J1-J4 midpoint bridges -->
+  <path d="M820 630 Q880 585 940 630" class="thinR"/><circle cx="880" cy="590" r="20" fill="#d63f3f"/><text x="880" y="597" text-anchor="middle" class="label white">1</text>
+  <path d="M820 720 Q880 765 940 720" class="thinB"/><circle cx="880" cy="765" r="20" fill="#222"/><text x="880" y="772" text-anchor="middle" class="label white">2</text>
+  <path d="M820 830 Q880 785 940 830" class="thinR"/><circle cx="880" cy="800" r="20" fill="#d63f3f"/><text x="880" y="807" text-anchor="middle" class="label white">3</text>
+  <path d="M820 920 Q880 965 940 920" class="thinB"/><circle cx="880" cy="955" r="20" fill="#222"/><text x="880" y="962" text-anchor="middle" class="label white">4</text>
+
+  <!-- J5/J6 top-bottom bridges -->
+  <path d="M210 650 V850" class="thinR"/><circle cx="210" cy="750" r="22" fill="#d63f3f"/><text x="210" y="757" text-anchor="middle" class="label white">5</text>
+  <path d="M310 700 V900" class="thinB"/><circle cx="310" cy="800" r="22" fill="#222"/><text x="310" y="807" text-anchor="middle" class="label white">6</text>
+
+  <text x="390" y="745" class="note"><tspan class="bold">1/2：</tspan>上方红/黑轨左右跨接</text>
+  <text x="390" y="780" class="note"><tspan class="bold">3/4：</tspan>下方红/黑轨左右跨接</text>
+  <text x="390" y="815" class="note"><tspan class="bold">5/6：</tspan>上红接下红，上黑接下黑</text>
+  <text x="1130" y="765" class="label" fill="#b52222">所有模块VCC接红轨（3.3V）</text>
+  <text x="1130" y="810" class="label">所有模块GND接黑轨</text>
+
+  <!-- Safety -->
+  <rect x="80" y="1010" width="1680" height="130" rx="10" fill="#ffe0dd" stroke="#b4322b" stroke-width="3"/>
+  <text x="110" y="1050" class="section" fill="#8f1d18">禁止多路供电</text>
+  <text x="110" y="1086" class="note">电池供电时，不要同时接 STM32 USB-C、ST-Link 3.3V 或串口模块VCC。</text>
+  <text x="110" y="1118" class="note">下载程序只接 SWDIO、SWCLK、GND；串口只接 TX、RX、GND。任何模块发热立即断电。</text>
+</svg>

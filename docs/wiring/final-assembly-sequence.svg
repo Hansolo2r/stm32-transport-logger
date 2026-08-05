@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200">
+  <defs>
+    <filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#556269"/></marker>
+    <style>
+      text{font-family:"Microsoft YaHei","Segoe UI",sans-serif;fill:#172026;letter-spacing:0}.title{font-size:38px;font-weight:700}.subtitle{font-size:20px;fill:#4b5860}
+      .card{fill:#fff;stroke:#a3adb2;stroke-width:3;filter:url(#shadow)}.num{font-size:28px;font-weight:700;fill:#fff}.ct{font-size:25px;font-weight:700}.line{font-size:18px}.expect{font-size:17px;font-weight:700;fill:#176043}.warn{font-size:17px;font-weight:700;fill:#9d3211}.arrow{stroke:#556269;stroke-width:5;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1800" height="1200" fill="#f5f7f8"/>
+  <text x="70" y="62" class="title">最终装配顺序：每增加一组模块就测试一次</text>
+  <text x="70" y="100" class="subtitle">不要先粘死，也不要一次接完。任何一步失败，就只检查该步新增的元件和导线。</text>
+
+  <!-- Step 1 -->
+  <rect class="card" x="80" y="145" width="760" height="205" rx="13"/>
+  <circle cx="135" cy="195" r="32" fill="#6b7780"/><text x="135" y="205" text-anchor="middle" class="num">1</text>
+  <text x="190" y="190" class="ct">只摆位置，不接电、不粘死</text>
+  <text x="190" y="230" class="line">按安装图放好全部模块，确认没有重叠。</text>
+  <text x="190" y="266" class="line">检查：Type-C、开关、OLED、RESET、SWD、串口、纽扣电池都可接触。</text>
+  <text x="190" y="309" class="expect">通过标准：所有导线能沿边缘到达，蓝牙天线和温度探头周围留空。</text>
+
+  <!-- Step 2 -->
+  <rect class="card" x="960" y="145" width="760" height="205" rx="13"/>
+  <circle cx="1015" cy="195" r="32" fill="#b75d43"/><text x="1015" y="205" text-anchor="middle" class="num">2</text>
+  <text x="1070" y="190" class="ct">只搭电源链</text>
+  <text x="1070" y="230" class="line">电池 → 锂充 → 开关 → TPS63020；STM32暂时不接。</text>
+  <text x="1070" y="266" class="line">万用表测 TPS输出、上红轨、下红轨，均应约为3.3V。</text>
+  <text x="1070" y="309" class="expect">通过标准：开关OFF=0V，ON=约3.3V；正负极正确，无模块发热。</text>
+
+  <path d="M840 247 H945" class="arrow"/>
+
+  <!-- Step 3 -->
+  <rect class="card" x="80" y="405" width="760" height="205" rx="13"/>
+  <circle cx="135" cy="455" r="32" fill="#2c3439"/><text x="135" y="465" text-anchor="middle" class="num">3</text>
+  <text x="190" y="450" class="ct">加入 STM32</text>
+  <text x="190" y="490" class="line">3.3V轨 → STM32 3V3；黑轨 → STM32 GND。</text>
+  <text x="190" y="526" class="line">先不开ST-Link供电，只用电池开关启动。</text>
+  <text x="190" y="569" class="expect">通过标准：PC13状态灯工作；USART1可看到启动信息；3.3V仍稳定。</text>
+
+  <!-- Step 4 -->
+  <rect class="card" x="960" y="405" width="760" height="205" rx="13"/>
+  <circle cx="1015" cy="455" r="32" fill="#176b82"/><text x="1015" y="465" text-anchor="middle" class="num">4</text>
+  <text x="1070" y="450" class="ct">加入 OLED 和 DS18B20</text>
+  <text x="1070" y="490" class="line">OLED：PB8/PB9；温度：DQ→PA8；两者VCC/GND接轨。</text>
+  <text x="1070" y="526" class="line">观察OLED温度，并用手指短暂靠近传感器测试变化。</text>
+  <text x="1070" y="569" class="expect">通过标准：OLED亮、温度合理；拔掉DQ后报告数据错误而不是0°C。</text>
+
+  <path d="M840 507 H945" class="arrow"/>
+  <path d="M1340 350 V390 H460 V395" class="arrow"/>
+
+  <!-- Step 5 -->
+  <rect class="card" x="80" y="665" width="760" height="205" rx="13"/>
+  <circle cx="135" cy="715" r="32" fill="#34758c"/><text x="135" y="725" text-anchor="middle" class="num">5</text>
+  <text x="190" y="710" class="ct">加入 ADXL345</text>
+  <text x="190" y="750" class="line">PB10→SCL，PB11→SDA，CS→3.3V，SDO→GND。</text>
+  <text x="190" y="786" class="line">先平放，再做六面翻转、运动和轻微碰撞测试。</text>
+  <text x="190" y="829" class="expect">通过标准：设备ID=E5；六面约出现±1g；事件计数合理且无read error。</text>
+
+  <!-- Step 6 -->
+  <rect class="card" x="960" y="665" width="760" height="205" rx="13"/>
+  <circle cx="1015" cy="715" r="32" fill="#536691"/><text x="1015" y="725" text-anchor="middle" class="num">6</text>
+  <text x="1070" y="710" class="ct">加入 W25Q64 和 DS1302</text>
+  <text x="1070" y="750" class="line">Flash接PB12~PB15；RTC接PA4/PA5/PA6。</text>
+  <text x="1070" y="786" class="line">记录数据后断电重启，再执行export和time检查。</text>
+  <text x="1070" y="829" class="expect">通过标准：Flash ID=EF 40 17；历史记录仍在；RTC断电后继续计时。</text>
+
+  <path d="M840 767 H945" class="arrow"/>
+  <path d="M1340 610 V650 H460 V655" class="arrow"/>
+
+  <!-- Step 7 -->
+  <rect class="card" x="80" y="925" width="760" height="205" rx="13"/>
+  <circle cx="135" cy="975" r="32" fill="#2f7068"/><text x="135" y="985" text-anchor="middle" class="num">7</text>
+  <text x="190" y="970" class="ct">最后加入 JDY-16 蓝牙</text>
+  <text x="190" y="1010" class="line">PA2(TX)→RX，PA3(RX)←TX，波特率9600。</text>
+  <text x="190" y="1046" class="line">手机连接后测试状态、暂停/恢复、export、调参和时间显示。</text>
+  <text x="190" y="1089" class="expect">通过标准：手机显示设备在线；命令可执行；断电重启后可重新连接。</text>
+
+  <!-- Step 8 -->
+  <rect class="card" x="960" y="925" width="760" height="205" rx="13"/>
+  <circle cx="1015" cy="975" r="32" fill="#18764f"/><text x="1015" y="985" text-anchor="middle" class="num">8</text>
+  <text x="1070" y="970" class="ct">固定、整理和整机测试</text>
+  <text x="1070" y="1010" class="line">逐根缩短/整理跳线，再固定PCB边缘和电池。</text>
+  <text x="1070" y="1046" class="line">完成掉电重启、长时间记录、RTC、Flash、BLE、运动与温度测试。</text>
+  <text x="1070" y="1089" class="expect">通过标准：摇晃外壳不掉线；连续运行无read error；导出数据完整。</text>
+
+  <path d="M840 1027 H945" class="arrow"/>
+  <path d="M1340 870 V910 H460 V915" class="arrow"/>
+
+  <rect x="80" y="1155" width="1640" height="36" rx="7" fill="#ffe0dd" stroke="#b4322b" stroke-width="2"/>
+  <text x="900" y="1181" text-anchor="middle" class="warn">任一步出现发热、3.3V异常、串口乱码或模块失联：立即断电，只拆查该步新增的部分。</text>
+</svg>

@@ -14,3 +14,5 @@ Thumbs.db
 *.bak
 *.tmp
 
+# Local visual brainstorming sessions
+.superpowers/

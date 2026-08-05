@@ -372,3 +372,14 @@
 - Signal coverage: documents DS18B20 PA8, DS1302 PA4/PA5/PA6, JDY-16 PA2/PA3, OLED PB8/PB9, ADXL345 PB10/PB11 plus CS/SDO mode straps, and W25Q64 PB12-PB15.
 - Evidence boundary: physical positions are a recommended layout because module PCB dimensions and header direction can vary; the signal-to-pin mapping is the source-of-truth connection list for the current CubeMX configuration.
 - Validation: rendered the SVG through headless Edge at 2400 x 1800 and visually checked text contrast, clipping, component overlap, rail bridging, and pin labels. No firmware or CubeMX changes were made.
+
+## 2026-08-05 - Final enclosure breadboard plan
+
+- Objective: replace the initial generic breadboard drawing with an assembly reference based on the real 830-hole board, the photographed module proportions, and the purchased power-component dimensions.
+- Selected layout: front-mounted battery with a left power zone, central STM32/storage/motion zone, and right display/wireless/cold zone. The ADXL345 sits near the assembled device center; the JDY-16 antenna and DS18B20 sensor face outward.
+- Exact purchased dimensions represented: 40 x 20 x 6 mm LiPo battery, 18 x 12 x 4.2 mm charger, 17 x 13 x 4.2 mm TPS63020, and 12.7 x 6.7 mm SS12D10 switch body.
+- Deliverables: `final-breadboard-placement`, `final-power-wiring`, `final-signal-wiring`, and `final-assembly-sequence`, each provided as editable SVG and rendered PNG under `docs/wiring`.
+- Power design: documents the battery-charger-switch-TPS63020-3.3 V chain, six required breadboard rail bridges, center-plus-one-outer-pin switch use, multimeter verification, and the prohibition on simultaneous battery, USB-C, ST-Link 3.3 V, or USB-UART VCC power.
+- Signal design: rechecked against `project 1.ioc`; no firmware or CubeMX changes were required. The diagrams retain PA8, PB8/PB9, PB10/PB11, PB12-PB15, PA4-PA6, and PA2/PA3 assignments.
+- Safety boundary: the charger pad order remains conditional until the received PCB silkscreen is visible. The diagram intentionally does not guess B/OUT pad locations from a product photograph.
+- Validation: rendered all four SVG files with headless Edge at their native 1800-pixel width and visually checked Chinese text contrast, clipping, module overlap, signal direction, power polarity, and staged test criteria.

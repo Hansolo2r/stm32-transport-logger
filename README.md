@@ -33,9 +33,23 @@ A compact STM32F103C8T6 logger that records temperature, motion, and shock event
 
 ## Breadboard Wiring
 
-![Breadboard placement and wiring diagram](docs/wiring/breadboard-wiring.png)
+### Physical placement
 
-The diagram reflects the active CubeMX pin assignments and separates physical placement from exact signal mapping. All modules share the 3.3 V and GND rails; the split power rails on a standard 830-point breadboard must be bridged explicitly.
+![Final breadboard placement](docs/wiring/final-breadboard-placement.png)
+
+### Battery and 3.3 V distribution
+
+![Final power wiring](docs/wiring/final-power-wiring.png)
+
+### Peripheral signal wiring
+
+![Final signal wiring](docs/wiring/final-signal-wiring.png)
+
+### Staged assembly and validation
+
+![Final assembly sequence](docs/wiring/final-assembly-sequence.png)
+
+The diagrams reflect the active CubeMX pin assignments and separate physical placement, power distribution, signal wiring, and staged validation. The selected layout keeps the battery on the front of the board, separates the DS18B20 from the power section, places the ADXL345 near the device center, and leaves the charger, switch, OLED, RTC battery, debug pins, and BLE antenna accessible. The charger pad order must still be confirmed from the received module's silkscreen before battery wiring.
 
 ## Current Validation Boundary
 

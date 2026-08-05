@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200">
+  <defs>
+    <pattern id="holes" width="25.4" height="25.4" patternUnits="userSpaceOnUse">
+      <circle cx="12.7" cy="12.7" r="3.3" fill="#91999d"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.22"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#263238"/>
+    </marker>
+    <style>
+      text{font-family:"Microsoft YaHei","Segoe UI",sans-serif;fill:#172026;letter-spacing:0}
+      .title{font-size:38px;font-weight:700}.subtitle{font-size:20px;fill:#4b5860}
+      .zone{font-size:20px;font-weight:700}.module{stroke:#fff;stroke-width:3;filter:url(#shadow)}
+      .module-title{font-size:20px;font-weight:700;fill:#fff}.module-note{font-size:15px;fill:#fff}
+      .dim{font-size:15px;fill:#334047}.label{font-size:17px;font-weight:700}
+      .callout{stroke:#263238;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+      .small{font-size:14px}.note{font-size:18px}.bold{font-weight:700}
+    </style>
+  </defs>
+
+  <rect width="1800" height="1200" fill="#f5f7f8"/>
+  <text x="75" y="62" class="title">方案 A：830孔面包板最终安装位置图</text>
+  <text x="75" y="100" class="subtitle">俯视方向，面包板约 165 × 55 mm；1 mm = 10 px。电池优先放正面，所有接口朝外壳边缘。</text>
+
+  <rect x="75" y="135" width="430" height="62" rx="8" fill="#fff0e7" stroke="#bd643f" stroke-width="2"/>
+  <text x="95" y="163" class="zone" fill="#8b3516">左侧：电源与发热区</text>
+  <text x="95" y="188" class="small">充电口、拨杆向左；与测温模块保持最远距离</text>
+  <rect x="650" y="135" width="490" height="62" rx="8" fill="#eaf0f3" stroke="#56656d" stroke-width="2"/>
+  <text x="670" y="163" class="zone">中央：控制、存储与运动测量</text>
+  <text x="670" y="188" class="small">ADXL345靠整机几何中心并刚性固定</text>
+  <rect x="1270" y="135" width="455" height="62" rx="8" fill="#e8f6f8" stroke="#2f8192" stroke-width="2"/>
+  <text x="1290" y="163" class="zone" fill="#175f70">右侧：显示、无线与冷区</text>
+  <text x="1290" y="188" class="small">天线和温度探头朝外，远离电池与稳压器</text>
+
+  <!-- Breadboard, 165 x 55 mm -->
+  <g>
+    <rect x="75" y="300" width="1650" height="550" rx="14" fill="#f4f3ec" stroke="#8f999e" stroke-width="4" filter="url(#shadow)"/>
+    <rect x="98" y="335" width="1604" height="68" fill="url(#holes)" opacity="0.85"/>
+    <line x1="105" y1="323" x2="1695" y2="323" stroke="#4088a8" stroke-width="5"/>
+    <line x1="105" y1="414" x2="1695" y2="414" stroke="#cf5555" stroke-width="5"/>
+    <rect x="98" y="435" width="1604" height="145" fill="url(#holes)" opacity="0.9"/>
+    <rect x="98" y="590" width="1604" height="34" fill="#d8dad6" stroke="#b7bcb9" stroke-width="1"/>
+    <rect x="98" y="635" width="1604" height="145" fill="url(#holes)" opacity="0.9"/>
+    <line x1="105" y1="790" x2="1695" y2="790" stroke="#cf5555" stroke-width="5"/>
+    <line x1="105" y1="822" x2="1695" y2="822" stroke="#4088a8" stroke-width="5"/>
+    <line x1="900" y1="304" x2="900" y2="846" stroke="#a9afb2" stroke-width="8" stroke-dasharray="12 10"/>
+    <text x="862" y="286" class="small">电源轨中点断开</text>
+  </g>
+
+  <!-- Scale -->
+  <g class="dim">
+    <line x1="75" y1="875" x2="1725" y2="875" stroke="#59666d" stroke-width="2"/>
+    <line x1="75" y1="866" x2="75" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="275" y1="866" x2="275" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="475" y1="866" x2="475" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="675" y1="866" x2="675" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="875" y1="866" x2="875" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="1075" y1="866" x2="1075" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="1275" y1="866" x2="1275" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="1475" y1="866" x2="1475" y2="884" stroke="#59666d" stroke-width="2"/>
+    <line x1="1725" y1="866" x2="1725" y2="884" stroke="#59666d" stroke-width="2"/>
+    <text x="69" y="906">0</text><text x="259" y="906">20</text><text x="459" y="906">40</text><text x="659" y="906">60</text><text x="859" y="906">80</text><text x="1049" y="906">100</text><text x="1249" y="906">120</text><text x="1449" y="906">140</text><text x="1688" y="906">165 mm</text>
+  </g>
+
+  <!-- Left power zone -->
+  <g>
+    <rect class="module" x="255" y="320" width="400" height="200" rx="10" fill="#3c6d59"/>
+    <text x="455" y="398" text-anchor="middle" class="module-title">3.7V 400mAh 锂电池</text>
+    <text x="455" y="430" text-anchor="middle" class="module-note">40 × 20 × 6 mm，正面固定</text>
+    <text x="455" y="461" text-anchor="middle" class="module-note">下方铺绝缘软垫，不压导线</text>
+
+    <rect class="module" x="75" y="550" width="180" height="120" rx="8" fill="#b75d43"/>
+    <text x="165" y="596" text-anchor="middle" class="module-title">锂充模块</text>
+    <text x="165" y="624" text-anchor="middle" class="module-note">18 × 12 × 4.2 mm</text>
+    <text x="165" y="651" text-anchor="middle" class="module-note">Type-C 朝左</text>
+
+    <rect class="module" x="75" y="730" width="127" height="67" rx="7" fill="#43494d"/>
+    <text x="138" y="758" text-anchor="middle" class="module-title" font-size="17">SS12D10</text>
+    <text x="138" y="783" text-anchor="middle" class="module-note">拨柄朝左</text>
+    <rect x="50" y="752" width="30" height="20" rx="3" fill="#2d3235"/>
+
+    <rect class="module" x="255" y="680" width="170" height="130" rx="8" fill="#8a663e"/>
+    <text x="340" y="728" text-anchor="middle" class="module-title">TPS63020</text>
+    <text x="340" y="756" text-anchor="middle" class="module-note">17 × 13 × 4.2 mm</text>
+    <text x="340" y="783" text-anchor="middle" class="module-note">输出 3.3V</text>
+  </g>
+
+  <!-- Compute zone -->
+  <g>
+    <rect class="module" x="675" y="440" width="590" height="230" rx="10" fill="#252b2f"/>
+    <rect x="655" y="510" width="35" height="88" rx="4" fill="#aeb4b7" stroke="#fff" stroke-width="2"/>
+    <text x="970" y="516" text-anchor="middle" class="module-title">STM32F103C8T6 核心板</text>
+    <text x="970" y="550" text-anchor="middle" class="module-note">约 59 × 23 mm，USB-C 朝左</text>
+    <text x="970" y="584" text-anchor="middle" class="module-note">上排：PA4/5/6、PA2/3、PB10/11</text>
+    <text x="970" y="618" text-anchor="middle" class="module-note">下排：PB12~15、PA8、PB8/9；RESET保持可按</text>
+
+    <rect class="module" x="455" y="690" width="250" height="150" rx="8" fill="#4f608b"/>
+    <text x="580" y="744" text-anchor="middle" class="module-title">W25Q64</text>
+    <text x="580" y="775" text-anchor="middle" class="module-note">约 25 × 15 mm</text>
+    <text x="580" y="806" text-anchor="middle" class="module-note">靠近 PB12~PB15</text>
+
+    <rect class="module" x="795" y="690" width="210" height="150" rx="8" fill="#34758c"/>
+    <text x="900" y="744" text-anchor="middle" class="module-title">ADXL345</text>
+    <text x="900" y="775" text-anchor="middle" class="module-note">约 21 × 15 mm</text>
+    <text x="900" y="806" text-anchor="middle" class="module-note">平放、刚性固定</text>
+    <circle cx="900" cy="765" r="92" fill="none" stroke="#0a5366" stroke-width="4" stroke-dasharray="10 8"/>
+    <text x="900" y="862" text-anchor="middle" class="label" fill="#175f70">整机几何中心附近</text>
+  </g>
+
+  <!-- Right interface/cold zone -->
+  <g>
+    <rect class="module" x="1255" y="340" width="440" height="230" rx="10" fill="#4e7a50"/>
+    <circle cx="1480" cy="448" r="78" fill="#c8ced0" stroke="#ecf0f1" stroke-width="6"/>
+    <text x="1360" y="389" text-anchor="middle" class="module-title">DS1302</text>
+    <text x="1360" y="421" text-anchor="middle" class="module-note">约 44 × 23 mm</text>
+    <text x="1360" y="536" text-anchor="middle" class="module-note">纽扣电池朝上，可更换</text>
+
+    <rect class="module" x="1085" y="710" width="380" height="120" rx="7" fill="#135d78"/>
+    <rect x="1110" y="730" width="330" height="70" rx="3" fill="#081d26" stroke="#a8d2df" stroke-width="2"/>
+    <text x="1275" y="769" text-anchor="middle" class="module-title">0.91英寸 OLED</text>
+    <text x="1275" y="815" text-anchor="middle" class="module-note">约 38 × 12 mm，屏幕朝外壳窗口</text>
+
+    <rect class="module" x="1495" y="590" width="200" height="100" rx="7" fill="#247a91"/>
+    <text x="1595" y="628" text-anchor="middle" class="module-title">DS18B20</text>
+    <text x="1595" y="657" text-anchor="middle" class="module-note">约 20 × 10 mm</text>
+    <circle cx="1708" cy="640" r="22" fill="#222" stroke="#bcdde6" stroke-width="4"/>
+    <path d="M1695 640 H1725" stroke="#bcdde6" stroke-width="6"/>
+
+    <rect class="module" x="1555" y="105" width="160" height="250" rx="8" fill="#2f7068"/>
+    <rect x="1572" y="118" width="126" height="74" rx="4" fill="#164840" stroke="#7bd2b8" stroke-width="3" stroke-dasharray="8 5"/>
+    <text x="1635" y="153" text-anchor="middle" class="module-title" font-size="18">PCB天线</text>
+    <text x="1635" y="222" text-anchor="middle" class="module-title">JDY-16</text>
+    <text x="1635" y="252" text-anchor="middle" class="module-note">模块竖立/外伸</text>
+    <text x="1635" y="282" text-anchor="middle" class="module-note">天线前方留空</text>
+    <rect x="1570" y="345" width="130" height="25" fill="#1d514b" stroke="#fff" stroke-width="2"/>
+    <text x="1635" y="389" text-anchor="middle" class="small">排针插在右上边缘</text>
+  </g>
+
+  <!-- Direction callouts -->
+  <path d="M165 535 L95 465 L28 465" class="callout"/>
+  <text x="25" y="442" class="label">外壳左侧开孔</text>
+  <text x="25" y="463" class="small">Type-C与开关拨杆</text>
+
+  <path d="M1698 620 L1760 585" class="callout"/>
+  <text x="1510" y="925" class="label" fill="#175f70">温度探头露出外壳</text>
+  <text x="1510" y="950" class="small">周围不放胶带、泡棉或发热元件</text>
+
+  <!-- Bottom instructions -->
+  <rect x="75" y="970" width="1650" height="170" rx="10" fill="#ffffff" stroke="#aeb8bd" stroke-width="2"/>
+  <text x="105" y="1010" class="note bold">固定与可访问性</text>
+  <text x="105" y="1045" class="note">1. 先照图摆放，不要立刻粘死；确认所有线能到达、RESET可按、SWD和串口可接。</text>
+  <text x="105" y="1080" class="note">2. ADXL345必须平放且牢固；JDY-16天线区域下方和前方不要放电池、金属或密集导线。</text>
+  <text x="105" y="1115" class="note">3. 电池和悬空模块下方加绝缘软垫；胶带只压PCB边缘，不覆盖芯片、探头、天线、屏幕和接口。</text>
+</svg>
