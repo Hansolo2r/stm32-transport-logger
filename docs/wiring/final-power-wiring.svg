@@ -69,14 +69,18 @@
   <text x="105" y="490" class="small">电池正负极接反、TPS输出未调好或焊锡短路都会损坏模块。首次上电时不要连接STM32。</text>
 
   <!-- Rail bridge diagram -->
-  <text x="80" y="555" class="section">面包板电源轨：共需要6根跨接线</text>
+  <text x="80" y="555" class="section">面包板上、下两侧各有 +/− 两排电源孔：共需要6根跨接线</text>
   <rect x="80" y="590" width="1680" height="380" rx="14" fill="#f4f3ec" stroke="#929ba0" stroke-width="4"/>
+  <text x="95" y="634" class="label" fill="#b52222">上侧 + 孔排</text>
   <line x1="120" y1="650" x2="840" y2="650" stroke="#d63f3f" stroke-width="9"/>
   <line x1="920" y1="650" x2="1720" y2="650" stroke="#d63f3f" stroke-width="9"/>
+  <text x="95" y="690" class="label">上侧 − 孔排</text>
   <line x1="120" y1="700" x2="840" y2="700" stroke="#222" stroke-width="9"/>
   <line x1="920" y1="700" x2="1720" y2="700" stroke="#222" stroke-width="9"/>
+  <text x="95" y="840" class="label" fill="#b52222">下侧 + 孔排</text>
   <line x1="120" y1="850" x2="840" y2="850" stroke="#d63f3f" stroke-width="9"/>
   <line x1="920" y1="850" x2="1720" y2="850" stroke="#d63f3f" stroke-width="9"/>
+  <text x="95" y="890" class="label">下侧 − 孔排</text>
   <line x1="120" y1="900" x2="840" y2="900" stroke="#222" stroke-width="9"/>
   <line x1="920" y1="900" x2="1720" y2="900" stroke="#222" stroke-width="9"/>
   <rect x="850" y="610" width="60" height="320" fill="#d9dcd9"/>

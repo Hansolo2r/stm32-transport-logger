@@ -383,3 +383,4 @@
 - Signal design: rechecked against `project 1.ioc`; no firmware or CubeMX changes were required. The diagrams retain PA8, PB8/PB9, PB10/PB11, PB12-PB15, PA4-PA6, and PA2/PA3 assignments.
 - Safety boundary: the charger pad order remains conditional until the received PCB silkscreen is visible. The diagram intentionally does not guess B/OUT pad locations from a product photograph.
 - Validation: rendered all four SVG files with headless Edge at their native 1800-pixel width and visually checked Chinese text contrast, clipping, module overlap, signal direction, power polarity, and staged test criteria.
+- Drawing correction after physical-board review: replaced the generic continuous dot grid with the real 830-hole structure: top and bottom `+/-` power-rail rows, five `A-E` terminal rows, the center trench, and five `F-J` terminal rows. The power diagram now labels all four physical rail rows explicitly; module placement and firmware pin assignments are unchanged.

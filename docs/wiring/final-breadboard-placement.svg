@@ -37,14 +37,28 @@
   <!-- Breadboard, 165 x 55 mm -->
   <g>
     <rect x="75" y="300" width="1650" height="550" rx="14" fill="#f4f3ec" stroke="#8f999e" stroke-width="4" filter="url(#shadow)"/>
-    <rect x="98" y="335" width="1604" height="68" fill="url(#holes)" opacity="0.85"/>
-    <line x1="105" y1="323" x2="1695" y2="323" stroke="#4088a8" stroke-width="5"/>
-    <line x1="105" y1="414" x2="1695" y2="414" stroke="#cf5555" stroke-width="5"/>
-    <rect x="98" y="435" width="1604" height="145" fill="url(#holes)" opacity="0.9"/>
-    <rect x="98" y="590" width="1604" height="34" fill="#d8dad6" stroke="#b7bcb9" stroke-width="1"/>
-    <rect x="98" y="635" width="1604" height="145" fill="url(#holes)" opacity="0.9"/>
-    <line x1="105" y1="790" x2="1695" y2="790" stroke="#cf5555" stroke-width="5"/>
-    <line x1="105" y1="822" x2="1695" y2="822" stroke="#4088a8" stroke-width="5"/>
+    <!-- Top power rails: one negative row and one positive row -->
+    <line x1="105" y1="313" x2="1695" y2="313" stroke="#4088a8" stroke-width="5"/>
+    <rect x="98" y="320" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
+    <rect x="98" y="365" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
+    <line x1="105" y1="402" x2="1695" y2="402" stroke="#cf5555" stroke-width="5"/>
+
+    <!-- Main terminal strips: exactly five rows A-E and five rows F-J -->
+    <rect x="98" y="430" width="1604" height="127" fill="url(#holes)" opacity="0.9"/>
+    <rect x="98" y="568" width="1604" height="48" fill="#d8dad6" stroke="#b7bcb9" stroke-width="1"/>
+    <rect x="98" y="625" width="1604" height="127" fill="url(#holes)" opacity="0.9"/>
+
+    <!-- Bottom power rails: one positive row and one negative row -->
+    <line x1="105" y1="766" x2="1695" y2="766" stroke="#cf5555" stroke-width="5"/>
+    <rect x="98" y="775" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
+    <rect x="98" y="815" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
+    <line x1="105" y1="843" x2="1695" y2="843" stroke="#4088a8" stroke-width="5"/>
+
+    <!-- Row labels -->
+    <text x="48" y="335" class="label" fill="#2b7899">−</text><text x="48" y="383" class="label" fill="#b83e3e">+</text>
+    <text x="48" y="448" class="small">A</text><text x="48" y="473" class="small">B</text><text x="48" y="499" class="small">C</text><text x="48" y="524" class="small">D</text><text x="48" y="550" class="small">E</text>
+    <text x="48" y="643" class="small">F</text><text x="48" y="668" class="small">G</text><text x="48" y="694" class="small">H</text><text x="48" y="719" class="small">I</text><text x="48" y="745" class="small">J</text>
+    <text x="48" y="794" class="label" fill="#b83e3e">+</text><text x="48" y="834" class="label" fill="#2b7899">−</text>
     <line x1="900" y1="304" x2="900" y2="846" stroke="#a9afb2" stroke-width="8" stroke-dasharray="12 10"/>
     <text x="862" y="286" class="small">电源轨中点断开</text>
   </g>
@@ -139,10 +153,6 @@
   </g>
 
   <!-- Direction callouts -->
-  <path d="M165 535 L95 465 L28 465" class="callout"/>
-  <text x="25" y="442" class="label">外壳左侧开孔</text>
-  <text x="25" y="463" class="small">Type-C与开关拨杆</text>
-
   <path d="M1698 620 L1760 585" class="callout"/>
   <text x="1510" y="925" class="label" fill="#175f70">温度探头露出外壳</text>
   <text x="1510" y="950" class="small">周围不放胶带、泡棉或发热元件</text>
