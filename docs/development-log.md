@@ -355,3 +355,11 @@
 - Axis presentation: added a visible horizontal baseline, increased the chart height from 210 to 230 pixels, reserved bottom label space, and displays approximate labels as `MM-DD HH:MM` without seconds.
 - Browser validation: a mixed preview containing two `NA` legacy timestamps and two valid RTC timestamps rendered `08-05 12:05` and `08-05 12:18` at both 390 x 844 and 1440 x 900. Both sizes had zero console errors, zero horizontal overflow, and nonblank canvas pixels.
 - Firmware and CubeMX impact: none. This correction affects only the mobile dashboard and requires no board reflash.
+
+## 2026-08-05 - Approximate RTC anchoring for legacy temperature points
+
+- Field observation: the phone preview contained new RTC-stamped motion/shock records whose temperature was unavailable, while valid historical temperature records had only session-relative `time_s`. Neither subset alone provided two points with both temperature and calendar time.
+- Approximation method: for a temperature point without RTC data, the dashboard selects the nearest timestamped record in the same session and applies the difference between their `time_s` values. This yields an approximate calendar time without modifying stored Flash records.
+- Evidence boundary: estimated labels are explicitly marked `推算时间轴`; directly timestamped temperature points remain marked `真实时间轴`. When no same-session RTC anchor exists, the chart shows `会话时间轴`, and multi-session unanchored data falls back to older/newer record order.
+- Browser validation: a 390 x 844 test reproduced the reported structure with two RTC-stamped events containing `NA` temperature and three legacy temperature points. The chart displayed `08-05 12:18` to `08-05 12:20`, reported `推算时间轴`, produced no console errors, and had zero horizontal overflow.
+- Firmware and CubeMX impact: none. The correction is isolated to the mobile dashboard and requires only a page refresh after deployment.

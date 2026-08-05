@@ -18,6 +18,7 @@ const elements = {
   recordsSummary: $("#recordsSummary"), motionSummary: $("#motionSummary"), shockSummary: $("#shockSummary"),
   motionPanelCount: $("#motionPanelCount"), motionPanelState: $("#motionPanelState"),
   shockPanelCount: $("#shockPanelCount"), maxShock: $("#maxShock"), temperatureChart: $("#temperatureChart"),
+  chartAxisLabel: $("#chartAxisLabel"),
   configStatus: $("#configStatus"), configForm: $("#configForm"), shockThreshold: $("#shockThreshold"),
   motionThreshold: $("#motionThreshold"), motionConfirm: $("#motionConfirm"), stillConfirm: $("#stillConfirm"),
   shockCooldown: $("#shockCooldown"), temperatureInterval: $("#temperatureInterval"),
@@ -457,25 +458,47 @@ function drawTemperatureChart() {
   ctx.strokeStyle = "#aeb7bf";
   ctx.beginPath(); ctx.moveTo(plotLeft, plotBottom); ctx.lineTo(plotRight, plotBottom); ctx.stroke();
 
+  const parseTimestampMs = (timestamp) => timestamp ? new Date(timestamp.replace(" ", "T")).getTime() : NaN;
+  const anchors = recentRecords.map((item) => ({
+    session: item.session,
+    time: item.time,
+    timestampMs: parseTimestampMs(item.timestamp)
+  })).filter((item) => Number.isFinite(item.timestampMs) && Number.isFinite(item.time));
   const allPoints = recentRecords.filter((item) => Number.isFinite(item.temp) && item.temp > -100);
-  const timestampedPoints = allPoints.map((item) => ({
-    ...item,
-    timestampMs: item.timestamp ? new Date(item.timestamp.replace(" ", "T")).getTime() : NaN
-  })).filter((item) => Number.isFinite(item.timestampMs));
-  const timestamped = timestampedPoints.length >= 2;
-  const points = timestamped ? timestampedPoints : allPoints;
+  const estimatedPoints = allPoints.map((item) => {
+    const directTimestampMs = parseTimestampMs(item.timestamp);
+    if (Number.isFinite(directTimestampMs)) return { ...item, axisMs: directTimestampMs, estimated: false };
+    const sameSessionAnchors = anchors.filter((anchor) => anchor.session === item.session);
+    if (!sameSessionAnchors.length || !Number.isFinite(item.time)) return { ...item, axisMs: NaN, estimated: false };
+    const nearest = sameSessionAnchors.reduce((best, anchor) =>
+      Math.abs(anchor.time - item.time) < Math.abs(best.time - item.time) ? anchor : best);
+    return { ...item, axisMs: nearest.timestampMs + (item.time - nearest.time) * 1000, estimated: true };
+  }).filter((item) => Number.isFinite(item.axisMs));
+  const calendarTimed = estimatedPoints.length >= 2;
+  const points = calendarTimed ? estimatedPoints : allPoints;
   const values = points.map((item) => item.temp);
-  if (values.length < 2) { ctx.fillStyle = "#7b858f"; ctx.font = "13px sans-serif"; ctx.fillText("读取记录后显示温度曲线", 54, 100); return; }
+  if (values.length < 2) {
+    elements.chartAxisLabel.textContent = "等待温度记录";
+    ctx.fillStyle = "#7b858f"; ctx.font = "13px sans-serif"; ctx.fillText("至少需要两条有效温度记录", 54, 100); return;
+  }
   const min = Math.min(...values), max = Math.max(...values), span = Math.max(1, max - min);
-  const times = timestamped ? points.map((item) => item.timestampMs) : [];
-  const firstTime = timestamped ? Math.min(...times) : 0;
-  const lastTime = timestamped ? Math.max(...times) : 0;
+  const calendarTimes = calendarTimed ? points.map((item) => item.axisMs) : [];
+  const firstTime = calendarTimed ? Math.min(...calendarTimes) : 0;
+  const lastTime = calendarTimed ? Math.max(...calendarTimes) : 0;
+  const sameSession = points.every((item) => item.session === points[0].session);
+  const relativeTimed = !calendarTimed && sameSession && points.every((item) => Number.isFinite(item.time));
+  const relativeTimes = relativeTimed ? points.map((item) => item.time) : [];
+  const firstRelative = relativeTimed ? Math.min(...relativeTimes) : 0;
+  const lastRelative = relativeTimed ? Math.max(...relativeTimes) : 0;
   const timeSpan = Math.max(1, lastTime - firstTime);
+  const relativeSpan = Math.max(1, lastRelative - firstRelative);
   ctx.fillStyle = "#66717e"; ctx.font = "11px sans-serif";
   ctx.fillText(`${max.toFixed(1)}°`, 5, plotTop + 4); ctx.fillText(`${min.toFixed(1)}°`, 5, plotBottom + 4);
   ctx.strokeStyle = "#176b55"; ctx.lineWidth = 2; ctx.beginPath();
   points.forEach((point, index) => {
-    const ratio = timestamped && lastTime > firstTime ? (times[index] - firstTime) / timeSpan : index / (points.length - 1);
+    const ratio = calendarTimed && lastTime > firstTime ? (calendarTimes[index] - firstTime) / timeSpan :
+      relativeTimed && lastRelative > firstRelative ? (relativeTimes[index] - firstRelative) / relativeSpan :
+      index / (points.length - 1);
     const x = plotLeft + ratio * (plotRight - plotLeft);
     const value = point.temp;
     const y = plotBottom - (value - min) / span * (plotBottom - plotTop);
@@ -484,16 +507,31 @@ function drawTemperatureChart() {
   ctx.stroke();
   ctx.fillStyle = "#59636f";
   ctx.font = "12px sans-serif";
-  if (timestamped) {
-    const firstLabel = points[0].timestamp.slice(5, 16);
-    const lastLabel = points[points.length - 1].timestamp.slice(5, 16);
+  if (calendarTimed) {
+    const approximate = points.some((item) => item.estimated);
+    const formatAxisDate = (milliseconds) => {
+      const date = new Date(milliseconds);
+      return `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    };
+    elements.chartAxisLabel.textContent = approximate ? "推算时间轴" : "真实时间轴";
     ctx.textAlign = "left";
-    ctx.fillText(firstLabel, plotLeft, 207);
+    ctx.fillText(formatAxisDate(firstTime), plotLeft, 207);
     ctx.textAlign = "right";
-    ctx.fillText(lastLabel, plotRight, 207);
+    ctx.fillText(formatAxisDate(lastTime), plotRight, 207);
+    ctx.textAlign = "start";
+  } else if (relativeTimed) {
+    elements.chartAxisLabel.textContent = "会话时间轴";
+    ctx.textAlign = "left";
+    ctx.fillText(formatTime(firstRelative), plotLeft, 207);
+    ctx.textAlign = "right";
+    ctx.fillText(formatTime(lastRelative), plotRight, 207);
     ctx.textAlign = "start";
   } else {
-    ctx.fillText("旧记录：按会话内顺序显示", plotLeft, 207);
+    elements.chartAxisLabel.textContent = "记录顺序";
+    ctx.fillText("较早", plotLeft, 207);
+    ctx.textAlign = "right";
+    ctx.fillText("较新", plotRight, 207);
+    ctx.textAlign = "start";
   }
 }
 
