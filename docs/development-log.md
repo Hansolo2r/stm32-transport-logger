@@ -338,3 +338,12 @@
 - Firmware build validation: STM32CubeIDE Debug clean build completed with 0 errors and 0 warnings. Firmware uses 44,024 bytes of code/constant Flash, 12 bytes of initialized data, and 2,924 bytes of zero-initialized RAM.
 - Browser validation: Edge/Playwright passed at 390 x 844 and 1440 x 900 with no console errors or horizontal overflow. Simulated new-format status, preview, motion, and shock frames displayed full timestamps; an old-format preview remained readable; the chart rendered nonblank with a real-time x-axis.
 - Hardware download pending: STM32CubeProgrammer currently reports `ST-LINK error (DEV_CONNECT_ERR)`, so this integrated image has not yet been flashed. Reconnect board power and the SWD wiring, then repeat programming and verify `status_json` plus a new raw log record.
+
+## 2026-08-05 - Permanent mobile dashboard deployment
+
+- Deployment change: replaced the temporary `trycloudflare.com` tunnel as the normal phone entry point with GitHub Pages at `https://hansolo2r.github.io/stm32-transport-logger/`.
+- Repository: published the reviewed CubeMX/CubeIDE project, firmware sources, mobile dashboard, screenshots, and engineering log to the public `Hansolo2r/stm32-transport-logger` repository.
+- Repository hygiene: excluded generated Debug/Release artifacts, IDE-local settings, launch files, and the obsolete top-level `Inc/Src` tree. Commit authorship uses the GitHub noreply address.
+- Automation: `.github/workflows/pages.yml` uploads only `docs/mobile-app` on each push to `main`, so future dashboard changes automatically replace the fixed HTTPS site without requiring the development PC to stay online.
+- Deployment validation: the first workflow run occurred before Pages enablement and failed at `configure-pages`. After enabling workflow-based Pages and rerunning, all checkout, configuration, upload, and deployment steps passed. A separate public request returned HTTP 200 with `text/html; charset=utf-8`.
+- iPhone usage: open the fixed HTTPS address inside Bluefy because iOS Safari does not expose Web Bluetooth. The GitHub Pages origin is stable; it does not depend on the local Python server or Cloudflare tunnel process.
