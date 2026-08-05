@@ -1,166 +1,153 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200">
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1600" viewBox="0 0 2200 1600">
   <defs>
     <pattern id="holes" width="25.4" height="25.4" patternUnits="userSpaceOnUse">
-      <circle cx="12.7" cy="12.7" r="3.3" fill="#91999d"/>
+      <circle cx="12.7" cy="12.7" r="3.4" fill="#8f989d"/>
     </pattern>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.22"/>
-    </filter>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#263238"/>
-    </marker>
+    <pattern id="pins" width="25.4" height="25.4" patternUnits="userSpaceOnUse">
+      <circle cx="12.7" cy="12.7" r="6.2" fill="#e3b648" stroke="#fff" stroke-width="1.6"/>
+    </pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.22"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#354147"/></marker>
     <style>
-      text{font-family:"Microsoft YaHei","Segoe UI",sans-serif;fill:#172026;letter-spacing:0}
-      .title{font-size:38px;font-weight:700}.subtitle{font-size:20px;fill:#4b5860}
-      .zone{font-size:20px;font-weight:700}.module{stroke:#fff;stroke-width:3;filter:url(#shadow)}
-      .module-title{font-size:20px;font-weight:700;fill:#fff}.module-note{font-size:15px;fill:#fff}
-      .dim{font-size:15px;fill:#334047}.label{font-size:17px;font-weight:700}
-      .callout{stroke:#263238;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
-      .small{font-size:14px}.note{font-size:18px}.bold{font-weight:700}
+      text{font-family:"Microsoft YaHei","Segoe UI",sans-serif;fill:#162027;letter-spacing:0}.title{font-size:40px;font-weight:700}.subtitle{font-size:21px;fill:#4d5a61}.section{font-size:25px;font-weight:700}.label{font-size:18px;font-weight:700}.note{font-size:18px}.small{font-size:15px}.tiny{font-size:13px}.white{fill:#fff}.module{stroke:#fff;stroke-width:3;filter:url(#shadow)}.mt{font-size:22px;font-weight:700;fill:#fff}.mn{font-size:16px;fill:#fff}.call{stroke:#354147;stroke-width:3;fill:none;marker-end:url(#arrow)}
     </style>
   </defs>
 
-  <rect width="1800" height="1200" fill="#f5f7f8"/>
-  <text x="75" y="62" class="title">方案 A：830孔面包板最终安装位置图</text>
-  <text x="75" y="100" class="subtitle">俯视方向，面包板约 165 × 55 mm；1 mm = 10 px。电池优先放正面，所有接口朝外壳边缘。</text>
+  <rect width="2200" height="1600" fill="#f4f7f8"/>
+  <text x="70" y="62" class="title">方案 A 修正版：按真实孔位连通关系安装</text>
+  <text x="70" y="102" class="subtitle">标准830孔板：63个数字列；同一数字列内 A-E 相通、F-J 相通，中沟槽隔开。单排模块必须横跨不同数字列。</text>
 
-  <rect x="75" y="135" width="430" height="62" rx="8" fill="#fff0e7" stroke="#bd643f" stroke-width="2"/>
-  <text x="95" y="163" class="zone" fill="#8b3516">左侧：电源与发热区</text>
-  <text x="95" y="188" class="small">充电口、拨杆向左；与测温模块保持最远距离</text>
-  <rect x="650" y="135" width="490" height="62" rx="8" fill="#eaf0f3" stroke="#56656d" stroke-width="2"/>
-  <text x="670" y="163" class="zone">中央：控制、存储与运动测量</text>
-  <text x="670" y="188" class="small">ADXL345靠整机几何中心并刚性固定</text>
-  <rect x="1270" y="135" width="455" height="62" rx="8" fill="#e8f6f8" stroke="#2f8192" stroke-width="2"/>
-  <text x="1290" y="163" class="zone" fill="#175f70">右侧：显示、无线与冷区</text>
-  <text x="1290" y="188" class="small">天线和温度探头朝外，远离电池与稳压器</text>
+  <!-- Connectivity teaching panel -->
+  <rect x="70" y="135" width="900" height="285" rx="12" fill="#fff" stroke="#9aa6ac" stroke-width="3"/>
+  <text x="100" y="175" class="section">先理解孔位：为什么排针必须横着插</text>
+  <text x="100" y="210" class="note">同一数字列中，A-B-C-D-E内部相通；F-G-H-I-J内部相通；E和F之间不通。</text>
 
-  <!-- Breadboard, 165 x 55 mm -->
-  <g>
-    <rect x="75" y="300" width="1650" height="550" rx="14" fill="#f4f3ec" stroke="#8f999e" stroke-width="4" filter="url(#shadow)"/>
-    <!-- Top power rails: one negative row and one positive row -->
-    <line x1="105" y1="313" x2="1695" y2="313" stroke="#4088a8" stroke-width="5"/>
-    <rect x="98" y="320" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
-    <rect x="98" y="365" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
-    <line x1="105" y1="402" x2="1695" y2="402" stroke="#cf5555" stroke-width="5"/>
+  <!-- Correct mini example -->
+  <rect x="105" y="240" width="360" height="135" rx="8" fill="#edf8f3" stroke="#23845d" stroke-width="2"/>
+  <text x="125" y="270" class="label" fill="#176043">正确：4针横跨 1、2、3、4列</text>
+  <g fill="#858f94">
+    <circle cx="180" cy="320" r="6"/><circle cx="240" cy="320" r="6"/><circle cx="300" cy="320" r="6"/><circle cx="360" cy="320" r="6"/>
+    <circle cx="180" cy="350" r="6"/><circle cx="240" cy="350" r="6"/><circle cx="300" cy="350" r="6"/><circle cx="360" cy="350" r="6"/>
+  </g>
+  <rect x="154" y="294" width="232" height="27" rx="6" fill="#333"/><circle cx="180" cy="307" r="7" fill="#e3b648"/><circle cx="240" cy="307" r="7" fill="#e3b648"/><circle cx="300" cy="307" r="7" fill="#e3b648"/><circle cx="360" cy="307" r="7" fill="#e3b648"/>
+  <text x="180" y="369" text-anchor="middle" class="tiny">1</text><text x="240" y="369" text-anchor="middle" class="tiny">2</text><text x="300" y="369" text-anchor="middle" class="tiny">3</text><text x="360" y="369" text-anchor="middle" class="tiny">4</text>
 
-    <!-- Main terminal strips: exactly five rows A-E and five rows F-J -->
-    <rect x="98" y="430" width="1604" height="127" fill="url(#holes)" opacity="0.9"/>
-    <rect x="98" y="568" width="1604" height="48" fill="#d8dad6" stroke="#b7bcb9" stroke-width="1"/>
-    <rect x="98" y="625" width="1604" height="127" fill="url(#holes)" opacity="0.9"/>
+  <!-- Wrong mini example -->
+  <rect x="500" y="240" width="430" height="135" rx="8" fill="#fff0ed" stroke="#bd493c" stroke-width="2"/>
+  <text x="520" y="270" class="label" fill="#962b22">错误：4针竖着落在同一列A-D</text>
+  <line x1="625" y1="290" x2="625" y2="360" stroke="#bd493c" stroke-width="12"/>
+  <circle cx="625" cy="300" r="7" fill="#e3b648"/><circle cx="625" cy="320" r="7" fill="#e3b648"/><circle cx="625" cy="340" r="7" fill="#e3b648"/><circle cx="625" cy="360" r="7" fill="#e3b648"/>
+  <text x="660" y="307" class="tiny">A</text><text x="660" y="327" class="tiny">B</text><text x="660" y="347" class="tiny">C</text><text x="660" y="367" class="tiny">D</text>
+  <text x="730" y="325" class="label" fill="#962b22">四个引脚会被短接</text>
 
-    <!-- Bottom power rails: one positive row and one negative row -->
-    <line x1="105" y1="766" x2="1695" y2="766" stroke="#cf5555" stroke-width="5"/>
-    <rect x="98" y="775" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
-    <rect x="98" y="815" width="1604" height="25.4" fill="url(#holes)" opacity="0.9"/>
-    <line x1="105" y1="843" x2="1695" y2="843" stroke="#4088a8" stroke-width="5"/>
+  <rect x="1030" y="135" width="1100" height="68" rx="10" fill="#eaf2f5" stroke="#477080" stroke-width="3"/>
+  <text x="1060" y="178" class="label">列号已直接标在每组横向排针旁；同一半区内各模块不占用相同数字列。</text>
 
-    <!-- Row labels -->
-    <text x="48" y="335" class="label" fill="#2b7899">−</text><text x="48" y="383" class="label" fill="#b83e3e">+</text>
-    <text x="48" y="448" class="small">A</text><text x="48" y="473" class="small">B</text><text x="48" y="499" class="small">C</text><text x="48" y="524" class="small">D</text><text x="48" y="550" class="small">E</text>
-    <text x="48" y="643" class="small">F</text><text x="48" y="668" class="small">G</text><text x="48" y="694" class="small">H</text><text x="48" y="719" class="small">I</text><text x="48" y="745" class="small">J</text>
-    <text x="48" y="794" class="label" fill="#b83e3e">+</text><text x="48" y="834" class="label" fill="#2b7899">−</text>
-    <line x1="900" y1="304" x2="900" y2="846" stroke="#a9afb2" stroke-width="8" stroke-dasharray="12 10"/>
-    <text x="862" y="286" class="small">电源轨中点断开</text>
+  <!-- Breadboard body -->
+  <rect x="250" y="500" width="1600" height="650" rx="15" fill="#f5f3ea" stroke="#899399" stroke-width="4" filter="url(#shadow)"/>
+
+  <!-- Top power rows -->
+  <line x1="275" y1="520" x2="1825" y2="520" stroke="#3e83a3" stroke-width="5"/>
+  <rect x="250" y="530" width="1600" height="25.4" fill="url(#holes)"/>
+  <rect x="250" y="570" width="1600" height="25.4" fill="url(#holes)"/>
+  <line x1="275" y1="603" x2="1825" y2="603" stroke="#cf5050" stroke-width="5"/>
+
+  <!-- A-E/F-J terminal rows -->
+  <rect x="250" y="650" width="1600" height="127" fill="url(#holes)"/>
+  <rect x="250" y="788" width="1600" height="70" fill="#d8dad6" stroke="#b4bab7" stroke-width="1"/>
+  <rect x="250" y="880" width="1600" height="127" fill="url(#holes)"/>
+
+  <!-- Bottom power rows -->
+  <line x1="275" y1="1045" x2="1825" y2="1045" stroke="#cf5050" stroke-width="5"/>
+  <rect x="250" y="1055" width="1600" height="25.4" fill="url(#holes)"/>
+  <rect x="250" y="1095" width="1600" height="25.4" fill="url(#holes)"/>
+  <line x1="275" y1="1130" x2="1825" y2="1130" stroke="#3e83a3" stroke-width="5"/>
+
+  <!-- Rail midpoint breaks -->
+  <rect x="1038" y="505" width="24" height="105" fill="#c7cbc9"/>
+  <rect x="1038" y="1038" width="24" height="100" fill="#c7cbc9"/>
+  <text x="1050" y="485" text-anchor="middle" class="small">电源轨中点断开</text>
+
+  <!-- Row labels -->
+  <text x="215" y="550" class="label" fill="#2d7897">−</text><text x="215" y="590" class="label" fill="#b73c3c">+</text>
+  <text x="215" y="669" class="small">A</text><text x="215" y="694" class="small">B</text><text x="215" y="720" class="small">C</text><text x="215" y="745" class="small">D</text><text x="215" y="771" class="small">E</text>
+  <text x="215" y="899" class="small">F</text><text x="215" y="924" class="small">G</text><text x="215" y="950" class="small">H</text><text x="215" y="975" class="small">I</text><text x="215" y="1001" class="small">J</text>
+  <text x="215" y="1075" class="label" fill="#b73c3c">+</text><text x="215" y="1115" class="label" fill="#2d7897">−</text>
+
+  <!-- Column number scale -->
+  <g class="small">
+    <text x="263" y="630" text-anchor="middle">1</text><text x="365" y="630" text-anchor="middle">5</text><text x="492" y="630" text-anchor="middle">10</text><text x="619" y="630" text-anchor="middle">15</text><text x="746" y="630" text-anchor="middle">20</text><text x="873" y="630" text-anchor="middle">25</text><text x="1000" y="630" text-anchor="middle">30</text><text x="1127" y="630" text-anchor="middle">35</text><text x="1254" y="630" text-anchor="middle">40</text><text x="1381" y="630" text-anchor="middle">45</text><text x="1508" y="630" text-anchor="middle">50</text><text x="1635" y="630" text-anchor="middle">55</text><text x="1762" y="630" text-anchor="middle">60</text><text x="1838" y="630" text-anchor="middle">63</text>
   </g>
 
-  <!-- Scale -->
-  <g class="dim">
-    <line x1="75" y1="875" x2="1725" y2="875" stroke="#59666d" stroke-width="2"/>
-    <line x1="75" y1="866" x2="75" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="275" y1="866" x2="275" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="475" y1="866" x2="475" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="675" y1="866" x2="675" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="875" y1="866" x2="875" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="1075" y1="866" x2="1075" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="1275" y1="866" x2="1275" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="1475" y1="866" x2="1475" y2="884" stroke="#59666d" stroke-width="2"/>
-    <line x1="1725" y1="866" x2="1725" y2="884" stroke="#59666d" stroke-width="2"/>
-    <text x="69" y="906">0</text><text x="259" y="906">20</text><text x="459" y="906">40</text><text x="659" y="906">60</text><text x="859" y="906">80</text><text x="1049" y="906">100</text><text x="1249" y="906">120</text><text x="1449" y="906">140</text><text x="1688" y="906">165 mm</text>
-  </g>
+  <!-- Battery and power modules: fixed, not inserted -->
+  <rect class="module" x="275" y="620" width="400" height="200" rx="10" fill="#3c6d59"/>
+  <text x="475" y="690" text-anchor="middle" class="mt">3.7V 400mAh电池</text><text x="475" y="724" text-anchor="middle" class="mn">40 × 20 × 6 mm</text><text x="475" y="758" text-anchor="middle" class="mn">绝缘软垫+胶带固定，不插孔</text>
 
-  <!-- Left power zone -->
-  <g>
-    <rect class="module" x="255" y="320" width="400" height="200" rx="10" fill="#3c6d59"/>
-    <text x="455" y="398" text-anchor="middle" class="module-title">3.7V 400mAh 锂电池</text>
-    <text x="455" y="430" text-anchor="middle" class="module-note">40 × 20 × 6 mm，正面固定</text>
-    <text x="455" y="461" text-anchor="middle" class="module-note">下方铺绝缘软垫，不压导线</text>
+  <rect class="module" x="270" y="855" width="180" height="120" rx="8" fill="#b75d43"/>
+  <text x="360" y="900" text-anchor="middle" class="mt">锂充</text><text x="360" y="932" text-anchor="middle" class="mn">Type-C朝左</text><text x="360" y="960" text-anchor="middle" class="mn">焊线接电源</text>
+  <rect class="module" x="475" y="855" width="170" height="130" rx="8" fill="#8a663e"/>
+  <text x="560" y="902" text-anchor="middle" class="mt">TPS63020</text><text x="560" y="935" text-anchor="middle" class="mn">输出3.3V</text><text x="560" y="965" text-anchor="middle" class="mn">焊线接轨</text>
+  <rect class="module" x="270" y="1015" width="127" height="67" rx="7" fill="#43494d"/>
+  <text x="333" y="1045" text-anchor="middle" class="mt" font-size="18">SS12D10</text><text x="333" y="1070" text-anchor="middle" class="mn">拨柄朝左</text>
 
-    <rect class="module" x="75" y="550" width="180" height="120" rx="8" fill="#b75d43"/>
-    <text x="165" y="596" text-anchor="middle" class="module-title">锂充模块</text>
-    <text x="165" y="624" text-anchor="middle" class="module-note">18 × 12 × 4.2 mm</text>
-    <text x="165" y="651" text-anchor="middle" class="module-note">Type-C 朝左</text>
+  <!-- STM32 header/body: columns 18-37, B and I -->
+  <line x1="694.5" y1="688.1" x2="1177.1" y2="688.1" stroke="#1f2427" stroke-width="25" stroke-linecap="round"/>
+  <line x1="694.5" y1="688.1" x2="1177.3" y2="688.1" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <line x1="694.5" y1="968.9" x2="1177.1" y2="968.9" stroke="#1f2427" stroke-width="25" stroke-linecap="round"/>
+  <line x1="694.5" y1="968.9" x2="1177.3" y2="968.9" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <rect class="module" x="660" y="695" width="552" height="258" rx="10" fill="#252b2f"/>
+  <rect x="635" y="775" width="35" height="92" rx="4" fill="#aeb5b8" stroke="#fff" stroke-width="2"/>
+  <text x="936" y="770" text-anchor="middle" class="mt">STM32F103C8T6</text>
+  <text x="936" y="807" text-anchor="middle" class="mn">20×2排针：18-37列</text>
+  <text x="936" y="842" text-anchor="middle" class="mn">上排插B，下排插I，USB-C朝左</text>
+  <text x="936" y="878" text-anchor="middle" class="mn">A/C/D/E与F/G/H/J仍可插跳线</text>
+  <text x="936" y="916" text-anchor="middle" class="mn">不能让其他模块在同半区占用18-37列</text>
+  <text x="936" y="668" text-anchor="middle" class="label">B排：18-37列</text><text x="936" y="1000" text-anchor="middle" class="label">I排：18-37列</text>
 
-    <rect class="module" x="75" y="730" width="127" height="67" rx="7" fill="#43494d"/>
-    <text x="138" y="758" text-anchor="middle" class="module-title" font-size="17">SS12D10</text>
-    <text x="138" y="783" text-anchor="middle" class="module-note">拨柄朝左</text>
-    <rect x="50" y="752" width="30" height="20" rx="3" fill="#2d3235"/>
+  <!-- Top single-row modules, all headers horizontal in row A -->
+  <!-- DS1302 cols 42-46 -->
+  <line x1="1304.1" y1="662.7" x2="1405.7" y2="662.7" stroke="#203425" stroke-width="25" stroke-linecap="round"/><line x1="1304.1" y1="662.7" x2="1405.9" y2="662.7" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <rect class="module" x="1238" y="205" width="235" height="430" rx="10" fill="#4e7a50"/>
+  <circle cx="1355" cy="382" r="78" fill="#c7ced0" stroke="#fff" stroke-width="5"/>
+  <text x="1355" y="265" text-anchor="middle" class="mt">DS1302</text><text x="1355" y="484" text-anchor="middle" class="mn">5针横插A排</text><text x="1355" y="516" text-anchor="middle" class="mn">42-46列</text><text x="1355" y="550" text-anchor="middle" class="mn">模块本体向上伸出</text><text x="1355" y="584" text-anchor="middle" class="mn">纽扣电池可更换</text>
 
-    <rect class="module" x="255" y="680" width="170" height="130" rx="8" fill="#8a663e"/>
-    <text x="340" y="728" text-anchor="middle" class="module-title">TPS63020</text>
-    <text x="340" y="756" text-anchor="middle" class="module-note">17 × 13 × 4.2 mm</text>
-    <text x="340" y="783" text-anchor="middle" class="module-note">输出 3.3V</text>
-  </g>
+  <!-- W25 cols 50-55 -->
+  <line x1="1507.3" y1="662.7" x2="1634.3" y2="662.7" stroke="#293459" stroke-width="25" stroke-linecap="round"/><line x1="1507.3" y1="662.7" x2="1634.5" y2="662.7" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <rect class="module" x="1496" y="382" width="150" height="252" rx="8" fill="#4f608b"/>
+  <text x="1571" y="440" text-anchor="middle" class="mt">W25Q64</text><text x="1571" y="478" text-anchor="middle" class="mn">6针横插A排</text><text x="1571" y="510" text-anchor="middle" class="mn">50-55列</text><text x="1571" y="550" text-anchor="middle" class="mn">本体向上</text><text x="1571" y="590" text-anchor="middle" class="mn">按丝印接线</text>
 
-  <!-- Compute zone -->
-  <g>
-    <rect class="module" x="675" y="440" width="590" height="230" rx="10" fill="#252b2f"/>
-    <rect x="655" y="510" width="35" height="88" rx="4" fill="#aeb4b7" stroke="#fff" stroke-width="2"/>
-    <text x="970" y="516" text-anchor="middle" class="module-title">STM32F103C8T6 核心板</text>
-    <text x="970" y="550" text-anchor="middle" class="module-note">约 59 × 23 mm，USB-C 朝左</text>
-    <text x="970" y="584" text-anchor="middle" class="module-note">上排：PA4/5/6、PA2/3、PB10/11</text>
-    <text x="970" y="618" text-anchor="middle" class="module-note">下排：PB12~15、PA8、PB8/9；RESET保持可按</text>
+  <!-- JDY cols 59-62 -->
+  <line x1="1735.9" y1="662.7" x2="1812.1" y2="662.7" stroke="#1c4c47" stroke-width="25" stroke-linecap="round"/><line x1="1735.9" y1="662.7" x2="1812.3" y2="662.7" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <rect class="module" x="1693" y="260" width="160" height="375" rx="8" fill="#2f7068"/>
+  <rect x="1710" y="280" width="126" height="90" rx="5" fill="#164840" stroke="#78d0b6" stroke-width="3" stroke-dasharray="9 6"/>
+  <text x="1773" y="330" text-anchor="middle" class="mt" font-size="19">PCB天线</text><text x="1773" y="420" text-anchor="middle" class="mt">JDY-16</text><text x="1773" y="460" text-anchor="middle" class="mn">4针横插A排</text><text x="1773" y="492" text-anchor="middle" class="mn">59-62列</text><text x="1773" y="532" text-anchor="middle" class="mn">本体向上</text><text x="1773" y="570" text-anchor="middle" class="mn">天线前方留空</text>
 
-    <rect class="module" x="455" y="690" width="250" height="150" rx="8" fill="#4f608b"/>
-    <text x="580" y="744" text-anchor="middle" class="module-title">W25Q64</text>
-    <text x="580" y="775" text-anchor="middle" class="module-note">约 25 × 15 mm</text>
-    <text x="580" y="806" text-anchor="middle" class="module-note">靠近 PB12~PB15</text>
+  <!-- Bottom single-row modules, all headers horizontal in row J -->
+  <!-- ADXL cols 40-47 -->
+  <line x1="1253.3" y1="994.3" x2="1431.1" y2="994.3" stroke="#174e60" stroke-width="25" stroke-linecap="round"/><line x1="1253.3" y1="994.3" x2="1431.3" y2="994.3" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <rect class="module" x="1242" y="1014" width="202" height="210" rx="8" fill="#34758c"/>
+  <text x="1343" y="1063" text-anchor="middle" class="mt">ADXL345</text><text x="1343" y="1100" text-anchor="middle" class="mn">8针横插J排</text><text x="1343" y="1132" text-anchor="middle" class="mn">40-47列</text><text x="1343" y="1168" text-anchor="middle" class="mn">平放、刚性固定</text><text x="1343" y="1200" text-anchor="middle" class="mn">与STM列不重叠</text>
 
-    <rect class="module" x="795" y="690" width="210" height="150" rx="8" fill="#34758c"/>
-    <text x="900" y="744" text-anchor="middle" class="module-title">ADXL345</text>
-    <text x="900" y="775" text-anchor="middle" class="module-note">约 21 × 15 mm</text>
-    <text x="900" y="806" text-anchor="middle" class="module-note">平放、刚性固定</text>
-    <circle cx="900" cy="765" r="92" fill="none" stroke="#0a5366" stroke-width="4" stroke-dasharray="10 8"/>
-    <text x="900" y="862" text-anchor="middle" class="label" fill="#175f70">整机几何中心附近</text>
-  </g>
+  <!-- OLED cols 51-54 -->
+  <line x1="1532.7" y1="994.3" x2="1608.9" y2="994.3" stroke="#0b4052" stroke-width="25" stroke-linecap="round"/><line x1="1532.7" y1="994.3" x2="1609.1" y2="994.3" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <rect class="module" x="1510" y="1014" width="122" height="378" rx="8" fill="#135d78"/>
+  <rect x="1525" y="1060" width="92" height="260" rx="4" fill="#071b23" stroke="#a8d3df" stroke-width="2"/>
+  <text x="1571" y="1045" text-anchor="middle" class="mt" font-size="18">OLED</text><text x="1571" y="1350" text-anchor="middle" class="mn">4针横插J排</text><text x="1571" y="1378" text-anchor="middle" class="mn">51-54列</text>
 
-  <!-- Right interface/cold zone -->
-  <g>
-    <rect class="module" x="1255" y="340" width="440" height="230" rx="10" fill="#4e7a50"/>
-    <circle cx="1480" cy="448" r="78" fill="#c8ced0" stroke="#ecf0f1" stroke-width="6"/>
-    <text x="1360" y="389" text-anchor="middle" class="module-title">DS1302</text>
-    <text x="1360" y="421" text-anchor="middle" class="module-note">约 44 × 23 mm</text>
-    <text x="1360" y="536" text-anchor="middle" class="module-note">纽扣电池朝上，可更换</text>
+  <!-- DS18 cols 59-61 -->
+  <line x1="1735.9" y1="994.3" x2="1786.7" y2="994.3" stroke="#125568" stroke-width="25" stroke-linecap="round"/><line x1="1735.9" y1="994.3" x2="1786.9" y2="994.3" stroke="#e3b648" stroke-width="12" stroke-linecap="round" stroke-dasharray="0.1 25.3"/>
+  <rect class="module" x="1712" y="1014" width="100" height="200" rx="8" fill="#247a91"/>
+  <text x="1762" y="1065" text-anchor="middle" class="mt" font-size="18">DS18B20</text><text x="1762" y="1102" text-anchor="middle" class="mn">3针横插J排</text><text x="1762" y="1134" text-anchor="middle" class="mn">59-61列</text><circle cx="1762" cy="1180" r="20" fill="#222" stroke="#bce0e8" stroke-width="4"/>
 
-    <rect class="module" x="1085" y="710" width="380" height="120" rx="7" fill="#135d78"/>
-    <rect x="1110" y="730" width="330" height="70" rx="3" fill="#081d26" stroke="#a8d2df" stroke-width="2"/>
-    <text x="1275" y="769" text-anchor="middle" class="module-title">0.91英寸 OLED</text>
-    <text x="1275" y="815" text-anchor="middle" class="module-note">约 38 × 12 mm，屏幕朝外壳窗口</text>
+  <!-- Column allocation labels -->
+  <rect x="270" y="1175" width="920" height="180" rx="10" fill="#fff" stroke="#9ca7ac" stroke-width="2"/>
+  <text x="300" y="1215" class="section">接跳线时怎么用剩余孔</text>
+  <text x="300" y="1252" class="note">模块排针插A排后，同列B/C/D/E任一空孔都能接跳线；插J排后，同列F/G/H/I任一空孔都能接跳线。</text>
+  <text x="300" y="1288" class="note">STM32上排插B后，用同列A/C/D/E接线；下排插I后，用同列F/G/H/J接线。</text>
+  <text x="300" y="1325" class="label" fill="#9b2c22">不要把ADXL345直接插在STM32下方相同的18-37列，否则会把不对应的引脚强制连接。</text>
 
-    <rect class="module" x="1495" y="590" width="200" height="100" rx="7" fill="#247a91"/>
-    <text x="1595" y="628" text-anchor="middle" class="module-title">DS18B20</text>
-    <text x="1595" y="657" text-anchor="middle" class="module-note">约 20 × 10 mm</text>
-    <circle cx="1708" cy="640" r="22" fill="#222" stroke="#bcdde6" stroke-width="4"/>
-    <path d="M1695 640 H1725" stroke="#bcdde6" stroke-width="6"/>
-
-    <rect class="module" x="1555" y="105" width="160" height="250" rx="8" fill="#2f7068"/>
-    <rect x="1572" y="118" width="126" height="74" rx="4" fill="#164840" stroke="#7bd2b8" stroke-width="3" stroke-dasharray="8 5"/>
-    <text x="1635" y="153" text-anchor="middle" class="module-title" font-size="18">PCB天线</text>
-    <text x="1635" y="222" text-anchor="middle" class="module-title">JDY-16</text>
-    <text x="1635" y="252" text-anchor="middle" class="module-note">模块竖立/外伸</text>
-    <text x="1635" y="282" text-anchor="middle" class="module-note">天线前方留空</text>
-    <rect x="1570" y="345" width="130" height="25" fill="#1d514b" stroke="#fff" stroke-width="2"/>
-    <text x="1635" y="389" text-anchor="middle" class="small">排针插在右上边缘</text>
-  </g>
-
-  <!-- Direction callouts -->
-  <path d="M1698 620 L1760 585" class="callout"/>
-  <text x="1510" y="925" class="label" fill="#175f70">温度探头露出外壳</text>
-  <text x="1510" y="950" class="small">周围不放胶带、泡棉或发热元件</text>
-
-  <!-- Bottom instructions -->
-  <rect x="75" y="970" width="1650" height="170" rx="10" fill="#ffffff" stroke="#aeb8bd" stroke-width="2"/>
-  <text x="105" y="1010" class="note bold">固定与可访问性</text>
-  <text x="105" y="1045" class="note">1. 先照图摆放，不要立刻粘死；确认所有线能到达、RESET可按、SWD和串口可接。</text>
-  <text x="105" y="1080" class="note">2. ADXL345必须平放且牢固；JDY-16天线区域下方和前方不要放电池、金属或密集导线。</text>
-  <text x="105" y="1115" class="note">3. 电池和悬空模块下方加绝缘软垫；胶带只压PCB边缘，不覆盖芯片、探头、天线、屏幕和接口。</text>
+  <rect x="270" y="1425" width="1840" height="125" rx="10" fill="#fff0e7" stroke="#bd5a31" stroke-width="3"/>
+  <text x="300" y="1465" class="section" fill="#873416">装配前再核对实物方向</text>
+  <text x="300" y="1502" class="note">本图确定排针所在数字列和模块本体伸出方向。模块旋转后，左到右引脚顺序必须按PCB丝印确认，再依据信号接线图连接。</text>
+  <text x="300" y="1535" class="note">先摆放、再插排针、最后接跳线；确认同一半区没有两个模块占用相同数字列后，才可以上电。</text>
 </svg>
