@@ -1,0 +1,9 @@
+{
+  "name": "STM32运输记录器",
+  "short_name": "运输记录器",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f8fa",
+  "theme_color": "#f7f8fa",
+  "lang": "zh-CN"
+}

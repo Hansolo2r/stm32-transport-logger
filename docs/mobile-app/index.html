@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8fa">
+  <title>运输记录器</title>
+  <link rel="icon" href="data:,">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">STM32 运输监测</p>
+      <h1>运输记录器</h1>
+    </div>
+    <div class="header-actions">
+      <button id="helpButton" class="icon-button" type="button" title="帮助" aria-label="打开帮助">?</button>
+      <button id="menuButton" class="icon-button" type="button" title="更多" aria-label="打开更多功能">⋯</button>
+      <button id="connectButton" class="primary-button" type="button">连接设备</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="connection-band" aria-live="polite">
+      <span id="connectionDot" class="status-dot"></span>
+      <div>
+        <strong id="connectionText">设备离线</strong>
+        <span id="deviceName">点击连接设备</span>
+        <span id="deviceClock">设备时间 --</span>
+      </div>
+      <span id="lastUpdate" class="last-update">尚未同步</span>
+    </section>
+
+    <section class="metrics" aria-label="实时状态">
+      <article class="metric temperature-metric">
+        <span>实时温度</span>
+        <strong><span id="temperature">--.-</span><small>°C</small></strong>
+      </article>
+      <article class="metric">
+        <span>当前状态</span>
+        <strong id="motionState">未知</strong>
+      </article>
+      <button class="metric interactive-metric" type="button" data-panel="motion">
+        <span>运动次数</span>
+        <strong id="motionCount">0</strong>
+        <small>查看运动详情 ›</small>
+      </button>
+      <button class="metric interactive-metric warning-metric" type="button" data-panel="shock">
+        <span>碰撞次数</span>
+        <strong id="shockCount">0</strong>
+        <small>查看碰撞详情 ›</small>
+      </button>
+      <button class="metric interactive-metric" type="button" data-panel="records">
+        <span>日志数量</span>
+        <strong id="recordCount">0</strong>
+        <small>在线预览记录 ›</small>
+      </button>
+      <article class="metric">
+        <span>存储状态</span>
+        <strong id="storageState">未知</strong>
+      </article>
+    </section>
+
+    <section id="eventBanner" class="event-banner" hidden aria-live="assertive"></section>
+
+    <section class="detail-band" aria-label="实时加速度">
+      <div>
+        <span>X轴</span>
+        <strong id="axisX">0 mg</strong>
+      </div>
+      <div>
+        <span>Y轴</span>
+        <strong id="axisY">0 mg</strong>
+      </div>
+      <div>
+        <span>Z轴</span>
+        <strong id="axisZ">0 mg</strong>
+      </div>
+    </section>
+
+    <section class="overview-actions" aria-label="常用操作">
+      <button id="refreshButton" type="button">刷新设备状态</button>
+      <button id="pauseButton" type="button">暂停记录</button>
+      <button id="clearButton" class="danger-button" type="button">开始新记录</button>
+      <button id="sleepButton" class="danger-button" type="button">设备休眠</button>
+    </section>
+  </main>
+
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  <aside id="drawer" class="drawer" aria-hidden="true" aria-labelledby="drawerTitle">
+    <header class="drawer-header">
+      <div>
+        <p id="drawerEyebrow" class="eyebrow">设备数据</p>
+        <h2 id="drawerTitle">详情</h2>
+      </div>
+      <button id="closeDrawerButton" class="icon-button" type="button" title="关闭" aria-label="关闭侧栏">×</button>
+    </header>
+
+    <div class="drawer-body">
+      <section class="panel-view" data-view="records" hidden>
+        <div class="panel-toolbar">
+          <p id="recordsSummary">连接设备后可读取最近100条记录</p>
+          <button id="reloadRecordsButton" class="secondary-button" type="button">重新读取</button>
+        </div>
+        <div id="recordsLoading" class="loading-state" hidden>正在从设备读取记录…</div>
+        <div class="chart-wrap">
+          <div class="chart-heading">
+            <strong>温度变化</strong>
+            <span>真实时间轴</span>
+          </div>
+          <canvas id="temperatureChart" width="640" height="220"></canvas>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>会话</th><th>记录时间</th><th>温度</th><th>事件</th></tr></thead>
+            <tbody id="recordsTableBody"></tbody>
+          </table>
+        </div>
+        <button id="downloadButton" class="full-width-button" type="button">下载完整CSV</button>
+      </section>
+
+      <section class="panel-view" data-view="motion" hidden>
+        <div class="panel-summary-grid">
+          <div><span>累计运动</span><strong id="motionPanelCount">0</strong></div>
+          <div><span>当前状态</span><strong id="motionPanelState">未知</strong></div>
+        </div>
+        <div class="panel-toolbar">
+          <p id="motionSummary">连接设备后读取运动记录</p>
+          <button class="secondary-button reload-events" type="button">重新读取</button>
+        </div>
+        <div id="eventsLoading" class="loading-state" hidden>正在从设备读取事件…</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>会话</th><th>记录时间</th><th>状态</th><th>温度</th></tr></thead>
+            <tbody id="motionTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel-view" data-view="shock" hidden>
+        <div class="panel-summary-grid">
+          <div><span>累计碰撞</span><strong id="shockPanelCount">0</strong></div>
+          <div><span>最大冲击</span><strong id="maxShock">-- g</strong></div>
+        </div>
+        <div class="panel-toolbar">
+          <p id="shockSummary">连接设备后读取碰撞记录</p>
+          <button class="secondary-button reload-events" type="button">重新读取</button>
+        </div>
+        <div id="shockEventsLoading" class="loading-state" hidden>正在从设备读取事件…</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>会话</th><th>记录时间</th><th>冲击</th><th>XYZ</th></tr></thead>
+            <tbody id="shockTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel-view help-view" data-view="help" hidden>
+        <h3>连接设备</h3>
+        <ol>
+          <li>打开JDY-16和手机蓝牙。</li>
+          <li>在iPhone的Bluefy中打开本页面。</li>
+          <li>点击“连接设备”，选择JDY-16。</li>
+        </ol>
+        <h3>数据说明</h3>
+        <dl>
+          <dt>运动次数</dt><dd>设备从静止进入持续运动的累计次数。</dd>
+          <dt>碰撞次数</dt><dd>加速度超过碰撞阈值的累计次数。</dd>
+          <dt>会话</dt><dd>每次重新上电形成一个新会话。</dd>
+          <dt>时间</dt><dd>当前会话启动后的经过时间，不是日历时间。</dd>
+        </dl>
+        <h3>记录管理</h3>
+        <p>“暂停记录”会停止新增日志和事件计数，但保持实时显示；“在线预览记录”读取最近100条；“下载完整CSV”导出Flash中的全部简化记录；“开始新记录”会清空旧数据。</p>
+        <h3>设备休眠</h3>
+        <p>休眠会关闭OLED并暂停STM32采集，但保持蓝牙连接。按钮会变成“唤醒设备”，点击即可恢复；Reset或重新上电也可以恢复。这不是物理断电，蓝牙模块仍会继续耗电。</p>
+      </section>
+
+      <section class="panel-view more-view" data-view="more" hidden>
+        <button type="button" data-panel="config">设备参数 <span>›</span></button>
+        <button type="button" data-panel="help">使用帮助 <span>›</span></button>
+        <button type="button" data-panel="diagnostics">通信诊断 <span>›</span></button>
+      </section>
+
+      <section class="panel-view" data-view="config" hidden>
+        <div class="panel-toolbar config-toolbar">
+          <p id="configStatus">连接设备后读取当前参数</p>
+          <button id="loadConfigButton" class="secondary-button" type="button">读取参数</button>
+        </div>
+        <form id="configForm" class="config-form">
+          <label>
+            <span>碰撞阈值</span>
+            <span class="number-control"><input id="shockThreshold" type="number" min="1100" max="8000" step="100" required><small>mg</small></span>
+            <small>合加速度超过此值记为碰撞，数值越小越灵敏。</small>
+          </label>
+          <label>
+            <span>运动偏差阈值</span>
+            <span class="number-control"><input id="motionThreshold" type="number" min="50" max="800" step="10" required><small>mg</small></span>
+            <small>合加速度偏离1g达到此值时判定为运动候选，数值越小越灵敏。</small>
+          </label>
+          <label>
+            <span>运动确认时间</span>
+            <span class="number-control"><input id="motionConfirm" type="number" min="10" max="2000" step="10" required><small>ms</small></span>
+            <small>异常加速度持续达到此时间后，才记录运动开始。</small>
+          </label>
+          <label>
+            <span>静止确认时间</span>
+            <span class="number-control"><input id="stillConfirm" type="number" min="100" max="30000" step="100" required><small>ms</small></span>
+            <small>加速度恢复稳定并持续达到此时间后，才记录运动结束。</small>
+          </label>
+          <label>
+            <span>碰撞间隔</span>
+            <span class="number-control"><input id="shockCooldown" type="number" min="100" max="10000" step="100" required><small>ms</small></span>
+            <small>间隔内的连续震动只计为一次碰撞。</small>
+          </label>
+          <label>
+            <span>温度记录间隔</span>
+            <span class="number-control"><input id="temperatureInterval" type="number" min="5" max="3600" step="5" required><small>秒</small></span>
+            <small>只影响写入Flash的周期，实时温度显示仍会继续更新。</small>
+          </label>
+          <div class="config-actions">
+            <button id="defaultConfigButton" type="button">恢复默认值</button>
+            <button id="saveConfigButton" class="primary-button" type="submit">保存到设备</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel-view" data-view="diagnostics" hidden>
+        <p class="diagnostic-note">这里仅保留手动命令和异常消息，正常状态同步不会刷屏。</p>
+        <div id="terminal" class="terminal" role="log"></div>
+        <form id="commandForm" class="command-form">
+          <input id="commandInput" type="text" maxlength="15" placeholder="输入命令" autocomplete="off">
+          <button type="submit">发送</button>
+        </form>
+        <button id="clearTerminalButton" class="quiet-button" type="button">清空诊断消息</button>
+      </section>
+    </div>
+  </aside>
+
+  <div id="toast" class="toast" hidden aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

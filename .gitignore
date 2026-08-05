@@ -1,0 +1,16 @@
+# STM32CubeIDE generated build and workspace state
+Debug/
+Release/
+.settings/
+*.launch
+
+# Legacy pre-CubeMX source tree retained locally only
+/Inc/
+/Src/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+
