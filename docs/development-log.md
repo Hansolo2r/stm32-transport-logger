@@ -363,3 +363,12 @@
 - Evidence boundary: estimated labels are explicitly marked `推算时间轴`; directly timestamped temperature points remain marked `真实时间轴`. When no same-session RTC anchor exists, the chart shows `会话时间轴`, and multi-session unanchored data falls back to older/newer record order.
 - Browser validation: a 390 x 844 test reproduced the reported structure with two RTC-stamped events containing `NA` temperature and three legacy temperature points. The chart displayed `08-05 12:18` to `08-05 12:20`, reported `推算时间轴`, produced no console errors, and had zero horizontal overflow.
 - Firmware and CubeMX impact: none. The correction is isolated to the mobile dashboard and requires only a page refresh after deployment.
+
+## 2026-08-05 - Breadboard integration diagram
+
+- Deliverable: added `docs/wiring/breadboard-wiring.svg` and a rendered PNG showing the recommended 830-point breadboard placement and the exact active firmware pin mapping.
+- Placement guidance: the STM32 board spans the center trench; W25Q64 is kept near SPI2; ADXL345 is mounted flat and rigid; the OLED faces the enclosure window; DS18B20 remains exposed; DS1302 stays battery-accessible; and the JDY-16 antenna is kept clear of metal and the battery.
+- Power guidance: marks both 3.3 V and common-GND rails, the center split that must be bridged, and the rule that SDO cannot substitute for the ADXL345 ground connection.
+- Signal coverage: documents DS18B20 PA8, DS1302 PA4/PA5/PA6, JDY-16 PA2/PA3, OLED PB8/PB9, ADXL345 PB10/PB11 plus CS/SDO mode straps, and W25Q64 PB12-PB15.
+- Evidence boundary: physical positions are a recommended layout because module PCB dimensions and header direction can vary; the signal-to-pin mapping is the source-of-truth connection list for the current CubeMX configuration.
+- Validation: rendered the SVG through headless Edge at 2400 x 1800 and visually checked text contrast, clipping, component overlap, rail bridging, and pin labels. No firmware or CubeMX changes were made.

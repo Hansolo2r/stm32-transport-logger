@@ -31,7 +31,12 @@ A compact STM32F103C8T6 logger that records temperature, motion, and shock event
 - `docs/mobile-app`: Web Bluetooth dashboard deployed by GitHub Pages
 - `docs/development-log.md`: implementation decisions, tests, failures, and fixes
 
+## Breadboard Wiring
+
+![Breadboard placement and wiring diagram](docs/wiring/breadboard-wiring.png)
+
+The diagram reflects the active CubeMX pin assignments and separates physical placement from exact signal mapping. All modules share the 3.3 V and GND rails; the split power rails on a standard 830-point breadboard must be bridged explicitly.
+
 ## Current Validation Boundary
 
 The firmware builds with STM32CubeIDE without errors or warnings. Individual sensor, storage, RTC, BLE, and browser workflows have been tested during development. This is a prototype and is not certified for commercial shipment monitoring.
-
