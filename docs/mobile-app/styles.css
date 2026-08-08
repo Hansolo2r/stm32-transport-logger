@@ -115,6 +115,7 @@ main { width: min(100%, 960px); margin: 0 auto; padding: 18px 20px calc(32px + e
 .detail-band span { color: #66717e; font-size: 12px; }
 
 .overview-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 20px; }
+#sleepButton { grid-column: 1 / -1; }
 .danger-button { border-color: #d8aaa0; color: #9f3824; }
 
 .drawer-backdrop { position: fixed; inset: 0; z-index: 20; background: rgba(20, 27, 34, .35); }

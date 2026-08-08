@@ -82,6 +82,7 @@
 
     <section class="overview-actions" aria-label="常用操作">
       <button id="refreshButton" type="button">刷新设备状态</button>
+      <button id="syncTimeButton" type="button">同步手机时间</button>
       <button id="pauseButton" type="button">暂停记录</button>
       <button id="clearButton" class="danger-button" type="button">开始新记录</button>
       <button id="sleepButton" class="danger-button" type="button">设备休眠</button>
@@ -169,12 +170,14 @@
           <dt>运动次数</dt><dd>设备从静止进入持续运动的累计次数。</dd>
           <dt>碰撞次数</dt><dd>加速度超过碰撞阈值的累计次数。</dd>
           <dt>会话</dt><dd>每次重新上电形成一个新会话。</dd>
-          <dt>时间</dt><dd>当前会话启动后的经过时间，不是日历时间。</dd>
+          <dt>时间</dt><dd>正常时使用DS1302日历时间；旧记录或时钟无效时退回会话内时间。</dd>
         </dl>
         <h3>记录管理</h3>
         <p>“暂停记录”会停止新增日志和事件计数，但保持实时显示；“在线预览记录”读取最近100条；“下载完整CSV”导出Flash中的全部简化记录；“开始新记录”会清空旧数据。</p>
         <h3>设备休眠</h3>
         <p>休眠会关闭OLED并暂停STM32采集，但保持蓝牙连接。按钮会变成“唤醒设备”，点击即可恢复；Reset或重新上电也可以恢复。这不是物理断电，蓝牙模块仍会继续耗电。</p>
+        <h3>同步时间</h3>
+        <p>连接设备后点击“同步手机时间”，网页会将手机当前时间写入DS1302并自动读取验证。同步失败时请检查DS1302供电以及PA4、PA5、PA6接线。</p>
       </section>
 
       <section class="panel-view more-view" data-view="more" hidden>
@@ -239,6 +242,7 @@
   </aside>
 
   <div id="toast" class="toast" hidden aria-live="polite"></div>
+  <script src="command-utils.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

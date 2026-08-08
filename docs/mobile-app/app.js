@@ -1,7 +1,7 @@
 const SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const decoder = new TextDecoder("utf-8");
-const encoder = new TextEncoder();
+const { formatTimeSetCommand, splitCommandPayload } = window.CommandUtils;
 
 const $ = (selector) => document.querySelector(selector);
 const elements = {
@@ -22,7 +22,8 @@ const elements = {
   configStatus: $("#configStatus"), configForm: $("#configForm"), shockThreshold: $("#shockThreshold"),
   motionThreshold: $("#motionThreshold"), motionConfirm: $("#motionConfirm"), stillConfirm: $("#stillConfirm"),
   shockCooldown: $("#shockCooldown"), temperatureInterval: $("#temperatureInterval"),
-  loadConfigButton: $("#loadConfigButton"), saveConfigButton: $("#saveConfigButton")
+  loadConfigButton: $("#loadConfigButton"), saveConfigButton: $("#saveConfigButton"),
+  syncTimeButton: $("#syncTimeButton")
 };
 
 let bleDevice = null;
@@ -267,6 +268,17 @@ function processLine(rawLine) {
     }
     return;
   }
+  if (line.startsWith("DS1302时间：")) {
+    const timestamp = normalizeTimestamp(line.slice("DS1302时间：".length));
+    setDeviceClock(timestamp);
+    showToast(timestamp ? "时间同步成功" : "设备返回的时间无效");
+    return;
+  }
+  if (line.includes("DS1302：读取值无效") || line.includes("DS1302：时间写入失败")) {
+    showToast("时间模块读取无效，请检查供电和三根信号线");
+    appendDiagnostic(line, "设备：");
+    return;
+  }
   appendDiagnostic(line, "设备：");
 }
 
@@ -291,8 +303,7 @@ async function sendCommand(command, { silent = true, transfer = null } = {}) {
     if (!silent) showToast("请先唤醒设备");
     return false;
   }
-  const payload = encoder.encode(`${trimmed}\n`);
-  if (payload.length > 20) { showToast("命令超过蓝牙单包长度"); return false; }
+  const chunks = splitCommandPayload(trimmed, 20);
   try {
     if (transfer) {
       transferLines = [];
@@ -305,8 +316,12 @@ async function sendCommand(command, { silent = true, transfer = null } = {}) {
         showToast("设备读取超时，请重试");
       }, 90000);
     }
-    if (typeof uartCharacteristic.writeValueWithoutResponse === "function") await uartCharacteristic.writeValueWithoutResponse(payload);
-    else await uartCharacteristic.writeValue(payload);
+    for (let index = 0; index < chunks.length; index += 1) {
+      const chunk = chunks[index];
+      if (typeof uartCharacteristic.writeValueWithoutResponse === "function") await uartCharacteristic.writeValueWithoutResponse(chunk);
+      else await uartCharacteristic.writeValue(chunk);
+      if (index + 1 < chunks.length) await new Promise((resolve) => setTimeout(resolve, 30));
+    }
     if (!silent) appendDiagnostic(trimmed, "发送：");
     return true;
   } catch (error) {
@@ -315,6 +330,24 @@ async function sendCommand(command, { silent = true, transfer = null } = {}) {
     appendDiagnostic(error.message, "发送失败：");
     showToast("发送失败");
     return false;
+  }
+}
+
+async function syncPhoneTime() {
+  if (!uartCharacteristic) { showToast("请先连接设备"); return; }
+  configBusy = true;
+  elements.syncTimeButton.disabled = true;
+  try {
+    const command = formatTimeSetCommand(new Date());
+    if (!await sendCommand(command, { silent: true })) return;
+    showToast("手机时间已发送，正在读取设备时间");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    await sendCommand("time", { silent: true });
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    await sendCommand("status_json", { silent: true });
+  } finally {
+    configBusy = false;
+    elements.syncTimeButton.disabled = false;
   }
 }
 
@@ -612,6 +645,7 @@ $("#closeDrawerButton").addEventListener("click", closePanel);
 elements.drawerBackdrop.addEventListener("click", closePanel);
 document.querySelectorAll("[data-panel]").forEach((button) => button.addEventListener("click", () => openPanel(button.dataset.panel)));
 $("#refreshButton").addEventListener("click", () => sendCommand("status_json", { silent: false }));
+elements.syncTimeButton.addEventListener("click", syncPhoneTime);
 $("#pauseButton").addEventListener("click", () => sendCommand(loggingPaused ? "resume" : "pause", { silent: false }));
 $("#sleepButton").addEventListener("click", async () => {
   if (deviceSleeping) {
