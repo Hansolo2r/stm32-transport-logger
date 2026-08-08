@@ -20,6 +20,7 @@ const elements = {
   shockPanelCount: $("#shockPanelCount"), maxShock: $("#maxShock"), temperatureChart: $("#temperatureChart"),
   chartAxisLabel: $("#chartAxisLabel"),
   configStatus: $("#configStatus"), configForm: $("#configForm"), shockThreshold: $("#shockThreshold"),
+  shockDuration: $("#shockDuration"),
   motionThreshold: $("#motionThreshold"), motionConfirm: $("#motionConfirm"), stillConfirm: $("#stillConfirm"),
   shockCooldown: $("#shockCooldown"), temperatureInterval: $("#temperatureInterval"),
   loadConfigButton: $("#loadConfigButton"), saveConfigButton: $("#saveConfigButton"),
@@ -79,9 +80,10 @@ function startPolling() {
 }
 
 function updateConfiguration(fields) {
-  if (fields.length < 6 || fields.slice(0, 6).some((value) => !Number.isFinite(Number(value)))) return;
+  if (fields.length < 7 || fields.slice(0, 7).some((value) => !Number.isFinite(Number(value)))) return;
   [elements.shockThreshold.value, elements.motionThreshold.value, elements.motionConfirm.value,
-    elements.stillConfirm.value, elements.shockCooldown.value, elements.temperatureInterval.value] = fields.slice(0, 6);
+    elements.stillConfirm.value, elements.shockCooldown.value, elements.temperatureInterval.value,
+    elements.shockDuration.value] = fields.slice(0, 7);
   elements.configStatus.textContent = "已读取设备当前参数";
   elements.configForm.dataset.loaded = "true";
 }
@@ -603,6 +605,7 @@ async function saveConfiguration(event) {
     `cfg sconf ${Math.trunc(Number(elements.stillConfirm.value))}`,
     `cfg cool ${Math.trunc(Number(elements.shockCooldown.value))}`,
     `cfg temp ${Math.trunc(Number(elements.temperatureInterval.value))}`,
+    `cfg shockms ${Math.trunc(Number(elements.shockDuration.value))}`,
   ];
   configBusy = true;
   elements.saveConfigButton.disabled = true;

@@ -15,13 +15,21 @@ async function openDashboard(viewport) {
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
   await page.addInitScript(() => {
     window.__bleWrites = [];
+    let notificationHandler = null;
     const characteristic = {
       startNotifications: async () => characteristic,
-      addEventListener: () => {},
+      addEventListener: (type, handler) => {
+        if (type === "characteristicvaluechanged") notificationHandler = handler;
+      },
       writeValueWithoutResponse: async (value) => {
         const bytes = new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
         window.__bleWrites.push(Array.from(bytes));
       }
+    };
+    window.__bleNotify = (text) => {
+      const bytes = new TextEncoder().encode(`${text}\n`);
+      characteristic.value = new DataView(bytes.buffer);
+      notificationHandler({ target: characteristic });
     };
     const device = {
       name: "JDY-16 Test",
@@ -72,6 +80,37 @@ test("shows the time-sync control without overflow on desktop", async () => {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
     assert.deepEqual(errors, []);
     await page.screenshot({ path: path.join(__dirname, "..", "..", "..", "..", "time-sync-desktop.png"), fullPage: true });
+  } finally {
+    await browser.close();
+  }
+});
+
+test("reads and saves the maximum shock duration", async () => {
+  const { browser, errors, page } = await openDashboard({ width: 390, height: 844 });
+  try {
+    await page.evaluate(() => {
+      document.querySelector('[data-panel="config"]').click();
+      window.__bleNotify("@CFG,2200,150,1000,1500,800,60,200");
+    });
+    await page.waitForFunction(() => document.querySelector("#shockDuration")?.value === "200");
+    await page.fill("#shockDuration", "250");
+    await page.evaluate(() => { window.__bleWrites = []; });
+    await page.click("#saveConfigButton");
+    await page.waitForTimeout(1300);
+
+    const writes = await page.evaluate(() => window.__bleWrites);
+    writes.forEach((write) => assert.ok(write.length <= 20));
+    const combined = Buffer.concat(writes.map((write) => Buffer.from(write))).toString("utf8");
+    assert.match(combined, /cfg shockms 250\n/);
+    assert.match(combined, /cfg shockms 250\ncfg save\n/);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
+    assert.deepEqual(errors, []);
+    await page.waitForTimeout(1600);
+    assert.equal(await page.locator("#toast").isHidden(), true);
+    await page.screenshot({
+      path: path.join(__dirname, "..", "..", "..", "..", "motion-shock-config-mobile.png"),
+      fullPage: true
+    });
   } finally {
     await browser.close();
   }

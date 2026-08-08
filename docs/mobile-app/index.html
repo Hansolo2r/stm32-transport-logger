@@ -195,7 +195,12 @@
           <label>
             <span>碰撞阈值</span>
             <span class="number-control"><input id="shockThreshold" type="number" min="1100" max="8000" step="100" required><small>mg</small></span>
-            <small>合加速度超过此值记为碰撞，数值越小越灵敏。</small>
+            <small>合加速度超过此值时进入碰撞候选，数值越小越灵敏。</small>
+          </label>
+          <label>
+            <span>碰撞最长持续时间</span>
+            <span class="number-control"><input id="shockDuration" type="number" min="10" max="1000" step="10" required><small>ms</small></span>
+            <small>高幅度脉冲不超过此时间才算碰撞；持续更久时按运动处理。</small>
           </label>
           <label>
             <span>运动偏差阈值</span>
@@ -205,7 +210,7 @@
           <label>
             <span>运动确认时间</span>
             <span class="number-control"><input id="motionConfirm" type="number" min="10" max="2000" step="10" required><small>ms</small></span>
-            <small>异常加速度持续达到此时间后，才记录运动开始。</small>
+            <small>运动证据累计达到此时间后，才记录运动开始。</small>
           </label>
           <label>
             <span>静止确认时间</span>
