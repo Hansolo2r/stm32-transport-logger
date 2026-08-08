@@ -5,6 +5,7 @@
 #include "data_logger.h"
 #include "ds1302.h"
 #include "ds18b20.h"
+#include "event_detector.h"
 #include "main.h"
 #include "ssd1306.h"
 #include "w25q64.h"
@@ -25,6 +26,8 @@
 #define CONFIG_STILL_CONFIRM_MAX_MS 30000U
 #define CONFIG_COOLDOWN_MIN_MS 100U
 #define CONFIG_COOLDOWN_MAX_MS 10000U
+#define CONFIG_SHOCK_DURATION_MIN_MS 10U
+#define CONFIG_SHOCK_DURATION_MAX_MS 1000U
 #define CONFIG_TEMP_INTERVAL_MIN_S 5U
 #define CONFIG_TEMP_INTERVAL_MAX_S 3600U
 #define FLASH_TEST_ADDRESS 0x007FF000UL
@@ -43,6 +46,7 @@ typedef struct
   uint16_t still_confirm_ms;
   uint16_t shock_cooldown_ms;
   uint16_t temperature_log_interval_s;
+  uint16_t shock_max_duration_ms;
 } AppConfiguration;
 
 typedef struct
@@ -81,8 +85,6 @@ static uint8_t oled_refresh_pending;
 static uint8_t oled_figure_frame;
 static uint8_t logging_paused;
 static uint8_t motion_active;
-static uint16_t motion_candidate_samples;
-static uint16_t still_samples;
 static uint16_t motion_event_count;
 static uint16_t shock_event_count;
 static int16_t latest_temperature_tenths;
@@ -101,6 +103,7 @@ static SSD1306_Alert oled_alert;
 static char latest_temperature_text[9];
 static DS1302_DateTime latest_date_time;
 static AppConfiguration configuration;
+static EventDetector event_detector;
 
 static char HexDigit(uint8_t value)
 {
@@ -395,12 +398,17 @@ static uint16_t ConfigurationCrc(const uint8_t *data, uint16_t length)
 
 static void SetDefaultConfiguration(void)
 {
-  configuration.shock_threshold_mg = 1600U;
-  configuration.motion_delta_mg = 200U;
-  configuration.motion_confirm_ms = 60U;
-  configuration.still_confirm_ms = 1000U;
-  configuration.shock_cooldown_ms = 500U;
+  configuration.shock_threshold_mg =
+    EVENT_DETECTOR_DEFAULT_SHOCK_THRESHOLD_MG;
+  configuration.motion_delta_mg = EVENT_DETECTOR_DEFAULT_MOTION_DELTA_MG;
+  configuration.motion_confirm_ms =
+    EVENT_DETECTOR_DEFAULT_MOTION_CONFIRM_MS;
+  configuration.still_confirm_ms =
+    EVENT_DETECTOR_DEFAULT_STILL_CONFIRM_MS;
+  configuration.shock_cooldown_ms = 800U;
   configuration.temperature_log_interval_s = 60U;
+  configuration.shock_max_duration_ms =
+    EVENT_DETECTOR_DEFAULT_SHOCK_MAX_DURATION_MS;
 }
 
 static uint8_t ConfigurationIsValid(const AppConfiguration *candidate)
@@ -416,7 +424,9 @@ static uint8_t ConfigurationIsValid(const AppConfiguration *candidate)
           (candidate->shock_cooldown_ms >= CONFIG_COOLDOWN_MIN_MS) &&
           (candidate->shock_cooldown_ms <= CONFIG_COOLDOWN_MAX_MS) &&
           (candidate->temperature_log_interval_s >= CONFIG_TEMP_INTERVAL_MIN_S) &&
-          (candidate->temperature_log_interval_s <= CONFIG_TEMP_INTERVAL_MAX_S)) ?
+          (candidate->temperature_log_interval_s <= CONFIG_TEMP_INTERVAL_MAX_S) &&
+          (candidate->shock_max_duration_ms >= CONFIG_SHOCK_DURATION_MIN_MS) &&
+          (candidate->shock_max_duration_ms <= CONFIG_SHOCK_DURATION_MAX_MS)) ?
          1U : 0U;
 }
 
@@ -426,13 +436,14 @@ static void EncodeConfiguration(uint8_t data[CONFIG_DATA_SIZE])
   data[0] = 'T';
   data[1] = 'C';
   data[2] = 'F';
-  data[3] = '1';
+  data[3] = '2';
   PutUint16(&data[4], configuration.shock_threshold_mg);
   PutUint16(&data[6], configuration.motion_delta_mg);
   PutUint16(&data[8], configuration.motion_confirm_ms);
   PutUint16(&data[10], configuration.still_confirm_ms);
   PutUint16(&data[12], configuration.shock_cooldown_ms);
   PutUint16(&data[14], configuration.temperature_log_interval_s);
+  PutUint16(&data[16], configuration.shock_max_duration_ms);
   PutUint16(&data[30], ConfigurationCrc(data, 30U));
 }
 
@@ -441,7 +452,7 @@ static uint8_t DecodeConfiguration(const uint8_t data[CONFIG_DATA_SIZE])
   AppConfiguration candidate;
 
   if ((data[0] != 'T') || (data[1] != 'C') ||
-      (data[2] != 'F') || (data[3] != '1') ||
+      (data[2] != 'F') || (data[3] != '2') ||
       (GetUint16(&data[30]) != ConfigurationCrc(data, 30U)))
   {
     return 0U;
@@ -452,6 +463,7 @@ static uint8_t DecodeConfiguration(const uint8_t data[CONFIG_DATA_SIZE])
   candidate.still_confirm_ms = GetUint16(&data[10]);
   candidate.shock_cooldown_ms = GetUint16(&data[12]);
   candidate.temperature_log_interval_s = GetUint16(&data[14]);
+  candidate.shock_max_duration_ms = GetUint16(&data[16]);
   if (ConfigurationIsValid(&candidate) == 0U)
   {
     return 0U;
@@ -505,6 +517,8 @@ static void SendConfiguration(void)
   SendUnsignedInteger(configuration.shock_cooldown_ms);
   SendStatus(",");
   SendUnsignedInteger(configuration.temperature_log_interval_s);
+  SendStatus(",");
+  SendUnsignedInteger(configuration.shock_max_duration_ms);
   SendStatus("\r\n");
 }
 
@@ -535,9 +549,17 @@ static uint8_t ParseUnsigned(const char *text, uint16_t *value)
 
 static void ResetEventDetection(void)
 {
+  EventDetectorConfig detector_configuration;
+
+  detector_configuration.shock_threshold_mg = configuration.shock_threshold_mg;
+  detector_configuration.motion_delta_mg = configuration.motion_delta_mg;
+  detector_configuration.motion_confirm_ms = configuration.motion_confirm_ms;
+  detector_configuration.still_confirm_ms = configuration.still_confirm_ms;
+  detector_configuration.shock_max_duration_ms =
+    configuration.shock_max_duration_ms;
+  detector_configuration.sample_interval_ms = ACCEL_SAMPLE_INTERVAL_MS;
+  EventDetector_Init(&event_detector, &detector_configuration);
   motion_active = 0U;
-  motion_candidate_samples = 0U;
-  still_samples = 0U;
 }
 
 static void ConfigurationChanged(void)
@@ -609,6 +631,10 @@ static void HandleConfigurationCommand(const char *command)
   else if (strncmp(command, "cfg temp ", 9U) == 0)
   {
     candidate.temperature_log_interval_s = value;
+  }
+  else if (strncmp(command, "cfg shockms ", 12U) == 0)
+  {
+    candidate.shock_max_duration_ms = value;
   }
   else
   {
@@ -707,29 +733,6 @@ static void AppendLogRecord(LogRecordType type, int16_t x_mg,
   }
 }
 
-static uint32_t AccelerationSquared(int16_t x_mg, int16_t y_mg,
-                                    int16_t z_mg)
-{
-  int32_t x = x_mg;
-  int32_t y = y_mg;
-  int32_t z = z_mg;
-
-  return (uint32_t)((x * x) + (y * y) + (z * z));
-}
-
-static uint32_t ThresholdSquared(uint16_t threshold_mg)
-{
-  uint32_t threshold = threshold_mg;
-
-  return threshold * threshold;
-}
-
-static uint16_t SamplesForMilliseconds(uint16_t milliseconds)
-{
-  return (uint16_t)((milliseconds + ACCEL_SAMPLE_INTERVAL_MS - 1U) /
-                    ACCEL_SAMPLE_INTERVAL_MS);
-}
-
 static void SetOledAlert(SSD1306_Alert alert, uint32_t now)
 {
   if ((alert == SSD1306_ALERT_SHOCK) ||
@@ -745,16 +748,10 @@ static void SetOledAlert(SSD1306_Alert alert, uint32_t now)
 static void HandleAccelerationEvent(int16_t x_mg, int16_t y_mg,
                                     int16_t z_mg, uint32_t now)
 {
-  uint32_t magnitude_squared = AccelerationSquared(x_mg, y_mg, z_mg);
-  uint16_t still_delta_mg = (configuration.motion_delta_mg > 50U) ?
-                            (uint16_t)(configuration.motion_delta_mg - 50U) :
-                            25U;
-  uint16_t motion_low_mg = (uint16_t)(1000U - configuration.motion_delta_mg);
-  uint16_t motion_high_mg = (uint16_t)(1000U + configuration.motion_delta_mg);
-  uint16_t still_low_mg = (uint16_t)(1000U - still_delta_mg);
-  uint16_t still_high_mg = (uint16_t)(1000U + still_delta_mg);
+  uint8_t events = EventDetector_Update(&event_detector, x_mg, y_mg, z_mg);
 
-  if ((magnitude_squared >= ThresholdSquared(configuration.shock_threshold_mg)) &&
+  motion_active = EventDetector_IsMotionActive(&event_detector);
+  if (((events & EVENT_DETECTOR_SHOCK) != 0U) &&
       ((shock_event_count == 0U) ||
        (now - shock_reported_at >= configuration.shock_cooldown_ms)))
   {
@@ -769,47 +766,21 @@ static void HandleAccelerationEvent(int16_t x_mg, int16_t y_mg,
     SendBluetoothEvent("SHOCK", shock_event_count);
   }
 
-  if (motion_active == 0U)
+  if ((events & EVENT_DETECTOR_MOTION_START) != 0U)
   {
-    if ((magnitude_squared < ThresholdSquared(motion_low_mg)) ||
-        (magnitude_squared > ThresholdSquared(motion_high_mg)))
-    {
-      if (++motion_candidate_samples >=
-          SamplesForMilliseconds(configuration.motion_confirm_ms))
-      {
-        motion_active = 1U;
-        motion_candidate_samples = 0U;
-        still_samples = 0U;
-        motion_event_count++;
-        SendStatus("事件：运动开始 #");
-        SendUnsignedInteger(motion_event_count);
-        SendStatus("\r\n");
-        AppendLogRecord(LOG_RECORD_MOTION_START, x_mg, y_mg, z_mg);
-        SetOledAlert(SSD1306_ALERT_MOTION, now);
-        SendBluetoothEvent("MOTION_START", motion_event_count);
-      }
-    }
-    else
-    {
-      motion_candidate_samples = 0U;
-    }
+    motion_event_count++;
+    SendStatus("事件：运动开始 #");
+    SendUnsignedInteger(motion_event_count);
+    SendStatus("\r\n");
+    AppendLogRecord(LOG_RECORD_MOTION_START, x_mg, y_mg, z_mg);
+    SetOledAlert(SSD1306_ALERT_MOTION, now);
+    SendBluetoothEvent("MOTION_START", motion_event_count);
   }
-  else if ((magnitude_squared >= ThresholdSquared(still_low_mg)) &&
-           (magnitude_squared <= ThresholdSquared(still_high_mg)))
+  if ((events & EVENT_DETECTOR_MOTION_END) != 0U)
   {
-    if (++still_samples >=
-        SamplesForMilliseconds(configuration.still_confirm_ms))
-    {
-      motion_active = 0U;
-      still_samples = 0U;
-      SendStatus("事件：运动结束\r\n");
-      AppendLogRecord(LOG_RECORD_MOTION_END, x_mg, y_mg, z_mg);
-      SendBluetoothEvent("MOTION_END", motion_event_count);
-    }
-  }
-  else
-  {
-    still_samples = 0U;
+    SendStatus("事件：运动结束\r\n");
+    AppendLogRecord(LOG_RECORD_MOTION_END, x_mg, y_mg, z_mg);
+    SendBluetoothEvent("MOTION_END", motion_event_count);
   }
 }
 
@@ -1243,9 +1214,7 @@ static void ExecuteCommand(const char *command)
   else if (strcmp(command, "pause") == 0)
   {
     logging_paused = 1U;
-    motion_active = 0U;
-    motion_candidate_samples = 0U;
-    still_samples = 0U;
+    ResetEventDetection();
     SendStatus("@CONTROL,PAUSED\r\n");
   }
   else if (strcmp(command, "resume") == 0)
@@ -1484,8 +1453,6 @@ void App_Init(UART_HandleTypeDef *console_uart,
   oled_refresh_pending = 1U;
   oled_figure_frame = 0U;
   motion_active = 0U;
-  motion_candidate_samples = 0U;
-  still_samples = 0U;
   motion_event_count = 0U;
   shock_event_count = 0U;
   latest_temperature_tenths = 0;
@@ -1628,6 +1595,8 @@ void App_Init(UART_HandleTypeDef *console_uart,
   {
     SendStatus("W25Q64：没有收到有效SPI响应\r\n");
   }
+
+  ResetEventDetection();
 
   if (HAL_UART_Receive_IT(console_channel.uart,
                           &console_channel.rx_byte, 1U) == HAL_OK)

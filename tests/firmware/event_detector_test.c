@@ -146,6 +146,43 @@ static void TestStillnessEndsMotionAtConfiguredTime(void)
   }
 }
 
+static void TestProductionDefaults(void)
+{
+  const char *name = "production defaults";
+
+  if ((EVENT_DETECTOR_DEFAULT_SHOCK_THRESHOLD_MG != 2200U) ||
+      (EVENT_DETECTOR_DEFAULT_MOTION_DELTA_MG != 150U) ||
+      (EVENT_DETECTOR_DEFAULT_MOTION_CONFIRM_MS != 1000U) ||
+      (EVENT_DETECTOR_DEFAULT_STILL_CONFIRM_MS != 1500U) ||
+      (EVENT_DETECTOR_DEFAULT_SHOCK_MAX_DURATION_MS != 200U))
+  {
+    Fail(name, "default values do not match the approved design");
+  }
+}
+
+static void TestShockDurationBoundary(void)
+{
+  const char *name = "shock duration boundary";
+  EventDetector detector;
+  uint8_t events;
+
+  EventDetector_Init(&detector, &default_config);
+  events = Feed(&detector, 2600, 20U);
+  events |= Feed(&detector, 1000, 20U);
+  if ((events & EVENT_DETECTOR_SHOCK) == 0U)
+  {
+    Fail(name, "exactly 200 ms must be a shock");
+  }
+
+  EventDetector_Init(&detector, &default_config);
+  events = Feed(&detector, 2600, 21U);
+  events |= Feed(&detector, 1000, 21U);
+  if ((events & EVENT_DETECTOR_SHOCK) != 0U)
+  {
+    Fail(name, "210 ms must not be a shock");
+  }
+}
+
 int main(void)
 {
   TestShortPulseFromRestIsShockOnly();
@@ -154,6 +191,8 @@ int main(void)
   TestShockWhileMovingIsRecorded();
   TestBriefSubShockActivityIsIgnored();
   TestStillnessEndsMotionAtConfiguredTime();
-  (void)printf("PASS event detector: 6 scenarios\n");
+  TestProductionDefaults();
+  TestShockDurationBoundary();
+  (void)printf("PASS event detector: 8 scenarios\n");
   return 0;
 }
