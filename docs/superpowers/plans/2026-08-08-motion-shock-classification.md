@@ -31,11 +31,11 @@
 - Consumes: 10 ms acceleration samples in mg and `EventDetectorConfig` thresholds.
 - Produces: `EventDetector_Update(EventDetector *, int16_t, int16_t, int16_t)` returning `EVENT_DETECTOR_SHOCK`, `EVENT_DETECTOR_MOTION_START`, or `EVENT_DETECTOR_MOTION_END` bits.
 
-- [ ] **Step 1: Write host tests for the six specified event sequences**
+- [x] **Step 1: Write host tests for the six specified event sequences**
 
 Create table-driven helpers that feed 10 ms samples. Assert that a 50 ms 2600 mg pulse produces only shock; 1000 ms of 1400 mg activity produces motion start and no startup shock; 300 ms above the shock threshold produces no shock; a 50 ms pulse while moving produces shock; 500 ms of sub-shock activity produces no event; and 1500 ms of still samples produces motion end.
 
-- [ ] **Step 2: Compile the tests and verify RED**
+- [x] **Step 2: Compile the tests and verify RED**
 
 Run:
 
@@ -45,11 +45,11 @@ D:\mingw64\bin\gcc.exe -std=c11 -Wall -Wextra -Werror -ICore\Inc tests\firmware\
 
 Expected: failure because `event_detector.h` and the detector functions do not exist.
 
-- [ ] **Step 3: Implement the detector state machine**
+- [x] **Step 3: Implement the detector state machine**
 
 Define a state containing motion-active state, leaky motion evidence, consecutive still samples, current shock-pulse length, pending startup shock, and suppression state. Convert configured milliseconds to sample counts with ceiling division by the configured 10 ms interval. Saturate counters to avoid overflow.
 
-- [ ] **Step 4: Compile and run the detector tests**
+- [x] **Step 4: Compile and run the detector tests**
 
 Run the GCC command above, then:
 
@@ -70,27 +70,27 @@ Expected: all six scenarios pass with exit code 0.
 - Consumes: event bits from Task 1 and a new `shock_max_duration_ms` configuration field.
 - Produces: unchanged log/BLE event names and an expanded `@CFG` record containing seven numeric values.
 
-- [ ] **Step 1: Add failing configuration assertions to the host test**
+- [x] **Step 1: Add failing configuration assertions to the host test**
 
 Assert that the default detector configuration uses 2200 mg, 150 mg, 1000 ms, 1500 ms, and 200 ms. Verify boundary behavior at exactly 200 ms and at 210 ms.
 
-- [ ] **Step 2: Verify the new assertions fail**
+- [x] **Step 2: Verify the new assertions fail**
 
 Compile and run the host test. Expected: failure until the production defaults and exact boundary behavior exist.
 
-- [ ] **Step 3: Integrate the detector in `app.c`**
+- [x] **Step 3: Integrate the detector in `app.c`**
 
 Replace `motion_candidate_samples` and direct shock/motion threshold branches in `HandleAccelerationEvent` with `EventDetector_Update`. Keep the existing logging, OLED alert, BLE event, counts, and cooldown actions. Mirror detector motion state into status output.
 
-- [ ] **Step 4: Extend configuration storage and commands**
+- [x] **Step 4: Extend configuration storage and commands**
 
 Add `shock_max_duration_ms` with valid range 10-1000 ms, default 200 ms, command `cfg shockms <value>`, and append it to `@CFG`. Store it at bytes 16-17, change the marker from `TCF1` to `TCF2`, and retain the existing CRC. Old saved configuration must fall back to the new defaults rather than being decoded incorrectly.
 
-- [ ] **Step 5: Run host tests again**
+- [x] **Step 5: Run host tests again**
 
 Expected: all detector and boundary tests pass with `-Wall -Wextra -Werror`.
 
-- [ ] **Step 6: Build the complete STM32 project**
+- [x] **Step 6: Build the complete STM32 project**
 
 Run:
 
@@ -111,11 +111,11 @@ Expected: `Build Finished. 0 errors, 0 warnings.` This verifies compilation only
 - Consumes: seven-field `@CFG` records.
 - Produces: `cfg shockms <value>` before `cfg save` and a visible maximum-shock-duration input.
 
-- [ ] **Step 1: Add a failing browser test**
+- [x] **Step 1: Add a failing browser test**
 
 Extend the BLE stub test to inject `@CFG,2200,150,1000,1500,800,60,200`, assert that the UI displays 200 ms, submit 250 ms, and assert that reconstructed BLE commands include `cfg shockms 250` followed by `cfg save`.
 
-- [ ] **Step 2: Run browser and utility tests to verify RED**
+- [x] **Step 2: Run browser and utility tests to verify RED**
 
 Run:
 
@@ -125,11 +125,11 @@ node --test docs/mobile-app/tests/*.test.cjs
 
 Expected: the new assertion fails because the field is absent.
 
-- [ ] **Step 3: Add the mobile field and protocol handling**
+- [x] **Step 3: Add the mobile field and protocol handling**
 
 Add a numeric input labelled `碰撞最长持续时间`, range 10-1000 ms, parse the seventh `@CFG` value, and include `cfg shockms` in the save sequence. Keep all displayed text in Chinese.
 
-- [ ] **Step 4: Run all web tests**
+- [x] **Step 4: Run all web tests**
 
 Expected: all Node and Playwright tests pass, with no console errors or mobile horizontal overflow.
 
@@ -143,14 +143,14 @@ Expected: all Node and Playwright tests pass, with no console errors or mobile h
 - Consumes: test and build output from Tasks 1-3.
 - Produces: factual GitHub-ready evidence that separates host tests, compilation, flashing, and physical validation.
 
-- [ ] **Step 1: Record the implementation and evidence**
+- [x] **Step 1: Record the implementation and evidence**
 
 Document the old false-positive mechanism, the new temporal state model, defaults, configuration migration, host-test results, and CubeIDE build result. Mark flashing and physical classification tests as pending until the user performs them.
 
-- [ ] **Step 2: Run final verification**
+- [x] **Step 2: Run final verification**
 
 Run host tests, web tests, `node --check docs/mobile-app/app.js`, the CubeIDE headless build, and `git diff --check`. Confirm no unrelated files are modified.
 
-- [ ] **Step 3: Explain the exact changes and flashing procedure**
+- [x] **Step 3: Explain the exact changes and flashing procedure**
 
 Report that CubeMX has no changes; identify `event_detector.c`, `app.c`, and the mobile parameter panel; explain `mg`, sample counts, leaky evidence, and state transitions in beginner-friendly Chinese. Give the expected physical tests for a tap, pickup-and-carry, sustained shake, and impact while moving.

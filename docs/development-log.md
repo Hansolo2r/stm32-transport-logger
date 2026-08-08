@@ -395,3 +395,18 @@
 - Error reporting: valid DS1302 replies update the device clock and show a success message; invalid reads or write failures display a direct Chinese warning while retaining the detailed diagnostic line.
 - Automated validation: three Node utility tests passed for formatting, byte-preserving chunk reconstruction, and short-command compatibility. Two Playwright/Edge tests passed at 390 x 844 and 1440 x 900, confirming the reconstructed `time set`, `time`, and `status_json` command sequence, 20-byte maximum writes, zero JavaScript errors, and no horizontal overflow.
 - Hardware interpretation: if synchronization succeeds, the RTC merely lost or halted its stored time. If synchronization still reports an invalid read, investigate DS1302 power and PA4/PA5/PA6 continuity rather than the dashboard.
+
+## 2026-08-08 - Temporal motion and shock classification
+
+- Observed limitation: shock and motion were previously evaluated independently from each 10 ms ADXL345 sample. A normal pickup could cross the shock threshold immediately and then satisfy the very short 60 ms motion confirmation, producing labels that did not match human interpretation.
+- Detection model: added a portable dual-timescale C state machine. A high-amplitude pulse lasting at most 200 ms is a shock; motion requires 1000 ms of accumulated evidence; 1500 ms of stable acceleration ends motion.
+- Resting behavior: a startup shock candidate is held temporarily. If the same action develops into sustained motion, the candidate is discarded so pickup-and-carry is recorded as motion rather than both motion and shock. If activity quickly settles, the short high pulse is recorded as shock.
+- Moving behavior: a separate high-amplitude pulse of at most 200 ms is still recorded as shock while motion remains active. The existing cooldown continues to suppress repeated counts from one vibration burst.
+- Default calibration: 2200 mg shock threshold, 200 ms maximum shock duration, 150 mg motion deviation, 1000 ms motion confirmation, 1500 ms still confirmation, and 800 ms shock cooldown.
+- Configuration migration: added `cfg shockms <value>` with a 10-1000 ms range and appended the value to `@CFG`. W25Q64 configuration marker changed from `TCF1` to `TCF2`; incompatible old configuration falls back to the new defaults and can then be saved normally.
+- Mobile UI: added a Chinese `碰撞最长持续时间` field. The dashboard reads the seventh configuration value and sends `cfg shockms` before `cfg save`, retaining BLE writes of at most 20 bytes.
+- Host validation: eight native C scenarios passed with MinGW GCC using `-Wall -Wextra -Werror`, including 200 ms accepted as shock, 210 ms rejected, startup suppression, motion-state impact, and exact still-time termination.
+- Browser validation: six Node/Playwright tests passed. The 390 px mobile configuration view had no JavaScript errors, no horizontal overflow, and displayed all seven parameters without clipping.
+- CubeMX impact: none. ADXL345 remains on I2C2 PB10/PB11 at the existing 100 Hz sample rate; no pins, clocks, interrupts, or generated initialization changed.
+- Firmware build validation: STM32CubeIDE Debug build completed with 0 errors and 0 warnings. Firmware uses 44,716 bytes of code/constant Flash, 12 bytes of initialized data, and 2,948 bytes of zero-initialized RAM.
+- Hardware validation pending: flash the new image, then test a short tap from rest, pickup-and-carry for over one second, sustained shaking, and a separate impact while already moving. Threshold accuracy must be judged from these physical observations after enclosure assembly.
