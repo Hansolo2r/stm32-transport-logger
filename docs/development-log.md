@@ -58,13 +58,13 @@ editing history is omitted.
   supports storage and export claims, not detection accuracy or transport
   performance.
 - Detector thresholds and timing can be changed and saved. Testing for other
-  mounting conditions, cold-chain transport, or vehicle impacts remains future
-  work.
+  mounting conditions, cold-chain transport, or vehicle impacts was not
+  performed in this project.
 
-## Open checks
+## Checks not performed
 
 - Battery endurance under a documented workload
 - RTC retention during a measured main-power-off interval
 - Temperature comparison with a reference thermometer
 - Enclosure-level calibration and labelled transport trials
-- A file-save fallback for CSV export in the current iOS Bluefy workflow
+- Direct CSV file saving in the current iOS Bluefy workflow

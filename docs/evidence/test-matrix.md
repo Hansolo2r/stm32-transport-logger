@@ -6,7 +6,7 @@ Status meanings:
 - `PARTIAL`: some required behavior was observed, but the full claim is open.
 - `MISSING`: no archived evidence is currently available.
 
-| Area | Status | Evidence | Boundary or next check |
+| Area | Status | Evidence | Evidence boundary |
 | --- | --- | --- | --- |
 | STM32 compilation | PASS | Latest CubeIDE Debug build: 0 errors, 0 warnings | Compilation only |
 | Firmware download | PASS | CubeProgrammer verified 44.45 KB ELF at 3.41 V | Does not prove every runtime path |
@@ -19,14 +19,14 @@ Status meanings:
 | W25Q64 JEDEC/read/write | PASS | EF 40 17, program/readback and retention log | Wear lifetime not measured |
 | Circular log continuation | PASS | Continued beyond former 128-record boundary | Repository has no raw 2,048-record export |
 | BLE status and commands | PASS | Live iPhone screenshot and parameter persistence test | Range and disconnect recovery not quantified |
-| Persistent configuration | PASS | Power-cycle test plus `cfg get` snapshot of final 2200/150 mg thresholds | Current final parameters need enclosure review |
+| Persistent configuration | PASS | Power-cycle test plus `cfg get` snapshot of final 2200/150 mg thresholds | Validated only for the photographed breadboard setup |
 | DS1302 read/write/ticking | PASS | Stable timestamp reads and live dashboard clock | Main-power-off retention interval is not closed |
 | Pause/resume and sleep/wake | PARTIAL | Firmware/browser paths and prior interactive checks | No formal battery-current measurement |
 | Battery-powered prototype | PASS | Archived breadboard photograph | Runtime duration unknown |
 | CSV export protocol | PASS | Manual and automated USART1 exports match across 378 shared rows; raw and simplified files archived | Bluefy iOS Blob download remains unsupported; current dataset is unlabeled |
-| Breadboard prototype packaging | PARTIAL | Archived powered prototype photo; user reports LiPo taped to the rear | Rear battery fixation and any charger/regulator or cable restraint still need a final photograph |
-| Real transport trial | MISSING | None | Define route, duration, labels, and references first |
-| Battery endurance | MISSING | None | Measure start/end voltage, duration, and workload |
+| Breadboard prototype packaging | PARTIAL | Archived powered prototype photo | No enclosure, strain-relief test, or rear-view evidence is archived |
+| Real transport trial | MISSING | None | Not evaluated in this project |
+| Battery endurance | MISSING | None | Not measured in this project |
 
 ## Latest Physical Observation
 
