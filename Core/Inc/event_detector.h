@@ -13,12 +13,6 @@ extern "C" {
 #define EVENT_DETECTOR_DEFAULT_STILL_CONFIRM_MS 1500U
 #define EVENT_DETECTOR_DEFAULT_SHOCK_MAX_DURATION_MS 200U
 
-#define EVENT_DETECTOR_DEFAULT_SHOCK_THRESHOLD_MG 2200U
-#define EVENT_DETECTOR_DEFAULT_MOTION_DELTA_MG 150U
-#define EVENT_DETECTOR_DEFAULT_MOTION_CONFIRM_MS 1000U
-#define EVENT_DETECTOR_DEFAULT_STILL_CONFIRM_MS 1500U
-#define EVENT_DETECTOR_DEFAULT_SHOCK_MAX_DURATION_MS 200U
-
 typedef struct
 {
   uint16_t shock_threshold_mg;
@@ -35,9 +29,21 @@ typedef struct
   uint16_t motion_evidence_samples;
   uint16_t still_samples;
   uint16_t shock_samples;
+  int16_t reference_x_mg;
+  int16_t reference_y_mg;
+  int16_t reference_z_mg;
+  int16_t previous_x_mg;
+  int16_t previous_y_mg;
+  int16_t previous_z_mg;
+  int16_t still_reference_x_mg;
+  int16_t still_reference_y_mg;
+  int16_t still_reference_z_mg;
   uint8_t motion_active;
   uint8_t pending_startup_shock;
   uint8_t shock_started_while_moving;
+  uint8_t reference_valid;
+  uint8_t previous_valid;
+  uint8_t still_reference_valid;
 } EventDetector;
 
 enum

@@ -13,6 +13,7 @@ Release/
 Thumbs.db
 *.bak
 *.tmp
+node_modules/
 
 # Local visual brainstorming sessions
 .superpowers/

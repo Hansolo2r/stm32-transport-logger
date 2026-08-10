@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible firmware, dashboard, or documentation issue
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Firmware
+        - BLE dashboard
+        - Build or test
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: State what happened and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs or photos
+      description: Remove personal information and credentials before attaching files.
