@@ -33,6 +33,23 @@ static uint8_t Feed(EventDetector *detector, int16_t magnitude_mg,
   return events;
 }
 
+static uint8_t FeedVector(EventDetector *detector, int16_t x_mg,
+                          int16_t y_mg, int16_t z_mg, uint16_t samples)
+{
+  uint8_t events = EVENT_DETECTOR_NONE;
+
+  for (uint16_t index = 0U; index < samples; index++)
+  {
+    events |= EventDetector_Update(detector, x_mg, y_mg, z_mg);
+  }
+  return events;
+}
+
+static void PrimeRest(EventDetector *detector)
+{
+  (void)FeedVector(detector, 0, 0, 1000, 1U);
+}
+
 static void TestShortPulseFromRestIsShockOnly(void)
 {
   const char *name = "short pulse from rest";
@@ -40,6 +57,7 @@ static void TestShortPulseFromRestIsShockOnly(void)
   uint8_t events;
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   events = Feed(&detector, 2600, 5U);
   events |= Feed(&detector, 1000, 5U);
 
@@ -60,6 +78,7 @@ static void TestSustainedMotionSuppressesStartupShock(void)
   uint8_t events;
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   events = Feed(&detector, 2600, 5U);
   events |= Feed(&detector, 1400, 95U);
 
@@ -80,6 +99,7 @@ static void TestLongHighLevelIsNotShock(void)
   uint8_t events;
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   events = Feed(&detector, 2600, 30U);
   events |= Feed(&detector, 1000, 30U);
 
@@ -96,6 +116,7 @@ static void TestShockWhileMovingIsRecorded(void)
   uint8_t events;
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   events = Feed(&detector, 1400, 100U);
   if ((events & EVENT_DETECTOR_MOTION_START) == 0U)
   {
@@ -117,6 +138,7 @@ static void TestBriefSubShockActivityIsIgnored(void)
   uint8_t events;
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   events = Feed(&detector, 1400, 50U);
   events |= Feed(&detector, 1000, 50U);
 
@@ -133,7 +155,9 @@ static void TestStillnessEndsMotionAtConfiguredTime(void)
   uint8_t events;
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   (void)Feed(&detector, 1400, 100U);
+  (void)Feed(&detector, 1000, 1U);
   events = Feed(&detector, 1000, 149U);
   if ((events & EVENT_DETECTOR_MOTION_END) != 0U)
   {
@@ -167,6 +191,7 @@ static void TestShockDurationBoundary(void)
   uint8_t events;
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   events = Feed(&detector, 2600, 20U);
   events |= Feed(&detector, 1000, 20U);
   if ((events & EVENT_DETECTOR_SHOCK) == 0U)
@@ -175,11 +200,172 @@ static void TestShockDurationBoundary(void)
   }
 
   EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
   events = Feed(&detector, 2600, 21U);
   events |= Feed(&detector, 1000, 21U);
   if ((events & EVENT_DETECTOR_SHOCK) != 0U)
   {
     Fail(name, "210 ms must not be a shock");
+  }
+}
+
+static void TestRotationAtOneGStartsMotion(void)
+{
+  const char *name = "one-g rotation";
+  EventDetector detector;
+  uint8_t events;
+
+  EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
+  events = FeedVector(&detector, 1000, 0, 0, 100U);
+  if ((events & EVENT_DETECTOR_MOTION_START) == 0U)
+  {
+    Fail(name, "rotation with unchanged magnitude must start motion");
+  }
+}
+
+static void TestWalkingVariationStartsMotion(void)
+{
+  const char *name = "walking variation";
+  EventDetector detector;
+  uint8_t events = EVENT_DETECTOR_NONE;
+
+  EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
+  for (uint16_t index = 0U; index < 100U; index++)
+  {
+    int16_t x_mg = ((index & 1U) == 0U) ? 120 : -120;
+    events |= EventDetector_Update(&detector, x_mg, 0, 993);
+  }
+  if ((events & EVENT_DETECTOR_MOTION_START) == 0U)
+  {
+    Fail(name, "alternating axis vibration must start motion");
+  }
+}
+
+static void TestStationaryNoiseIsIgnored(void)
+{
+  const char *name = "stationary noise";
+  EventDetector detector;
+  uint8_t events = EVENT_DETECTOR_NONE;
+
+  EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
+  for (uint16_t index = 0U; index < 300U; index++)
+  {
+    int16_t noise = ((index & 1U) == 0U) ? 10 : -10;
+    events |= EventDetector_Update(&detector, noise, noise, 1000);
+  }
+  if (events != EVENT_DETECTOR_NONE)
+  {
+    Fail(name, "small axis noise must not produce an event");
+  }
+}
+
+static void TestNewRestingOrientationBecomesReference(void)
+{
+  const char *name = "new resting orientation";
+  EventDetector detector;
+  uint8_t events;
+
+  EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
+  events = FeedVector(&detector, 1000, 0, 0, 100U);
+  if ((events & EVENT_DETECTOR_MOTION_START) == 0U)
+  {
+    Fail(name, "test setup did not enter motion");
+  }
+  events = FeedVector(&detector, 1000, 0, 0, 150U);
+  if ((events & EVENT_DETECTOR_MOTION_END) == 0U)
+  {
+    Fail(name, "stable new orientation did not end motion");
+  }
+  events = FeedVector(&detector, 1000, 0, 0, 100U);
+  if (events != EVENT_DETECTOR_NONE)
+  {
+    Fail(name, "new resting orientation restarted motion");
+  }
+}
+
+static void TestOccasionalRestNoiseStillEndsMotion(void)
+{
+  const char *name = "occasional rest noise";
+  EventDetector detector;
+  uint8_t events;
+
+  EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
+  events = FeedVector(&detector, 1000, 0, 0, 100U);
+  if ((events & EVENT_DETECTOR_MOTION_START) == 0U)
+  {
+    Fail(name, "test setup did not enter motion");
+  }
+
+  events = EVENT_DETECTOR_NONE;
+  for (uint16_t index = 0U; index < 300U; index++)
+  {
+    int16_t x_mg = (((index + 1U) % 50U) == 0U) ? 1060 : 1000;
+    events |= EventDetector_Update(&detector, x_mg, 0, 0);
+  }
+  if ((events & EVENT_DETECTOR_MOTION_END) == 0U)
+  {
+    Fail(name, "isolated sensor jitter kept motion active indefinitely");
+  }
+}
+
+static void TestIntermittentMovementStaysActive(void)
+{
+  const char *name = "intermittent movement";
+  EventDetector detector;
+  uint8_t events;
+  int16_t x_mg = 1000;
+
+  EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
+  events = FeedVector(&detector, x_mg, 0, 0, 100U);
+  if ((events & EVENT_DETECTOR_MOTION_START) == 0U)
+  {
+    Fail(name, "test setup did not enter motion");
+  }
+
+  events = EVENT_DETECTOR_NONE;
+  for (uint16_t index = 0U; index < 500U; index++)
+  {
+    if ((index % 10U) == 0U)
+    {
+      x_mg = (int16_t)(x_mg + 60);
+    }
+    events |= EventDetector_Update(&detector, x_mg, 0, 0);
+  }
+  if ((events & EVENT_DETECTOR_MOTION_END) != 0U)
+  {
+    Fail(name, "continued axis changes were classified as stillness");
+  }
+}
+
+static void TestBoundedRestJitterStillEndsMotion(void)
+{
+  const char *name = "bounded rest jitter";
+  EventDetector detector;
+  uint8_t events;
+
+  EventDetector_Init(&detector, &default_config);
+  PrimeRest(&detector);
+  events = FeedVector(&detector, 1000, 0, 0, 100U);
+  if ((events & EVENT_DETECTOR_MOTION_START) == 0U)
+  {
+    Fail(name, "test setup did not enter motion");
+  }
+
+  events = EVENT_DETECTOR_NONE;
+  for (uint16_t index = 0U; index < 160U; index++)
+  {
+    int16_t x_mg = ((index & 1U) == 0U) ? 1060 : 940;
+    events |= EventDetector_Update(&detector, x_mg, 0, 0);
+  }
+  if ((events & EVENT_DETECTOR_MOTION_END) == 0U)
+  {
+    Fail(name, "small bounded jitter kept motion active");
   }
 }
 
@@ -190,9 +376,16 @@ int main(void)
   TestLongHighLevelIsNotShock();
   TestShockWhileMovingIsRecorded();
   TestBriefSubShockActivityIsIgnored();
+  TestRotationAtOneGStartsMotion();
+  TestWalkingVariationStartsMotion();
+  TestStationaryNoiseIsIgnored();
+  TestNewRestingOrientationBecomesReference();
+  TestOccasionalRestNoiseStillEndsMotion();
+  TestIntermittentMovementStaysActive();
+  TestBoundedRestJitterStillEndsMotion();
   TestStillnessEndsMotionAtConfiguredTime();
   TestProductionDefaults();
   TestShockDurationBoundary();
-  (void)printf("PASS event detector: 8 scenarios\n");
+  (void)printf("PASS event detector: 15 scenarios\n");
   return 0;
 }

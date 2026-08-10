@@ -1,0 +1,1 @@
+run_id,date,start_time,end_time,firmware_commit,power_source,temperature_interval_s,motion_threshold_mg,motion_confirm_ms,still_confirm_ms,shock_threshold_mg,shock_max_ms,shock_cooldown_ms,rtc_synced,reference_device,planned_events,observed_notes,raw_csv_file

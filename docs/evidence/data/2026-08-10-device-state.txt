@@ -1,0 +1,38 @@
+STM32 transport logger read-only device snapshot
+Captured through USART1 on COM4 at 115200 8N1
+Capture time reported by DS1302: 2026-08-10 01:18:09
+
+Commands and raw responses:
+status_json
+@STATUS,301,75,87,438,1,1,0,40,4,976,0,2026-08-10 01:18:09
+
+cfg get
+@CFG,2200,150,1000,1500,800,60,200
+
+time
+DS1302时间：2026-08-10 01:18:09
+
+Decoded status fields:
+- Temperature: 30.1 C
+- Motion event count: 75
+- Shock event count: 87
+- Flash record count at snapshot time: 438
+- Flash read ready: yes
+- Flash write ready: yes
+- Motion active: no
+- Acceleration: X=40 mg, Y=4 mg, Z=976 mg
+- Logging paused: no
+- RTC ready: yes
+
+Decoded configuration fields:
+- Shock threshold: 2200 mg
+- Motion delta: 150 mg
+- Motion confirmation: 1000 ms
+- Still confirmation: 1500 ms
+- Shock cooldown: 800 ms
+- Temperature log interval: 60 s
+- Maximum shock duration: 200 ms
+
+The snapshot was taken after the 420-record raw CSV export. The record count
+therefore continued from 420 to 438 while the logger remained powered and
+recording. No configuration-changing, pause, clear, or sleep command was sent.

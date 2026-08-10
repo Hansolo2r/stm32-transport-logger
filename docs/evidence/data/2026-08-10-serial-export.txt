@@ -1,0 +1,44 @@
+STM32 transport logger serial export manifest
+Capture date: 2026-08-10 (Asia/Shanghai)
+Interface: UST-343A USB-to-TTL adapter, COM4
+UART: USART1, 115200 baud, 8 data bits, no parity, 1 stop bit, no flow control
+
+Commands captured:
+- export
+- export_raw
+
+Files:
+- 2026-08-10-serial-transport-log.csv
+  Data records: 388
+  Size: 13659 bytes
+  SHA-256: 8E0C57B74A8B5BD12BDFEF2121AEB3C534FA5EB4242E1D08F5E43951D4A54049
+- 2026-08-10-serial-transport-log-raw.csv
+  Data records: 420
+  Size: 21405 bytes
+  SHA-256: EF8F778FC4F91882BF9C68DD36CAA7961CED130474967DCDEAFD0F26A0470944
+
+Validation:
+- Simplified malformed rows: 0
+- Raw malformed rows: 0
+- Raw sequence range: 1 through 420
+- Missing raw sequences: 0
+- Valid RTC timestamps: 420
+- NA timestamps: 0
+- Temperature range across valid values: 23.6 C to 31.6 C
+- Reconstructed simplified sessions: 27
+- Raw record types: BOOT 31, TEMP 163, MOTION_START 75, MOTION_END 64, SHOCK 87
+
+Evidence boundary:
+These records were accumulated during development and bench handling without a
+synchronized external ground-truth event log. They support persistent storage,
+RTC timestamp, sensor-value, and serial-export claims only. They do not measure
+detection accuracy, calibrated temperature accuracy, battery endurance, or
+performance during a real shipment.
+
+Independent manual capture:
+- File: 2026-08-10-user-securecrt-export.txt
+- Extracted data records: 378
+- SHA-256 of archived text: BEC210ED6AEB81B4E6E9E402A7CC69BD99FD2268506289EF4CEE0332959A05D3
+- Result: all 378 extracted records equal the first 378 records of the
+  automated simplified export. The automated export has ten later periodic
+  temperature rows and no additional event rows.
