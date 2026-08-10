@@ -1,7 +1,7 @@
 # Evidence Package
 
-This directory contains source material for a future GitHub presentation. It
-keeps raw evidence separate from README wording and from generated diagrams.
+This directory contains the evidence used by the public project summary. It
+keeps raw evidence separate from README wording and assembly diagrams.
 
 ## Archived Images
 
@@ -16,9 +16,8 @@ keeps raw evidence separate from README wording and from generated diagrams.
 - What it supports: the modules were physically assembled on a breadboard and
   powered from the LiPo/charger/regulator chain; the OLED and board indicators
   were active when photographed.
-- Packaging decision: on 2026-08-10 the user selected this breadboard-mounted
-  arrangement as the basis of the final portable prototype rather than moving
-  the circuit to a custom PCB.
+- Project scope: the device remained a portable breadboard prototype. No
+  enclosure was completed.
 - What it does not support: enclosure completion, battery-life duration,
   calibration accuracy, or operation during a real shipment.
 
@@ -38,9 +37,8 @@ keeps raw evidence separate from README wording and from generated diagrams.
 - What it does not support: accuracy of every stored record or long-term radio
   reliability.
 
-The images are retained without editing so they remain traceable to the files
-provided by the user. A future public README may use cropped copies, but should
-keep these originals unchanged.
+The archived images are unedited so they remain traceable to the original
+files.
 
 Metadata check: neither archived JPEG contains GPS EXIF properties. The files
 retain a small number of non-location image properties; preserve the originals

@@ -63,25 +63,12 @@ sequence,type,timestamp,uptime_s,temp_c,x_mg,y_mg,z_mg
 - `type`: `BOOT`, `TEMP`, `MOTION_START`, `MOTION_END`, or `SHOCK`.
 - `x_mg`, `y_mg`, `z_mg`: ADXL345 acceleration components in mg.
 
-## Next Labeled Dataset to Collect
+## Scope Boundary
 
-1. Start a new session and synchronize the RTC.
-2. Record at least 10 minutes at room temperature.
-3. Mark the wall-clock time of one pickup-and-walk interval.
-4. Mark the wall-clock time of three deliberate short taps.
-5. Return the device to rest and wait for the static state.
-6. Export both CSV formats before clearing Flash.
-7. Save the untouched file in this directory using
-   `YYYY-MM-DD-test-description.csv`.
-8. Complete one row in `test-run-metadata-template.csv`.
+The repository uses these archived files as evidence of storage and export
+behavior. They do not measure detection accuracy. Measuring accuracy would
+require synchronized labels, controlled test conditions, and suitable reference
+equipment.
 
-## Longer Tests Worth Collecting
-
-- Battery endurance with start/end voltage and exact enabled modules.
-- RTC retention with main power removed for a documented interval.
-- Temperature comparison against a reference thermometer.
-- Enclosure-mounted motion and shock calibration.
-- A labelled walking or short transport route with known event times.
-
-Do not manually edit a raw export. Put cleaned or derived data in a separate
-`processed/` directory and document the transformation.
+Raw exports should remain unchanged. Any cleaned or derived data should be kept
+separately with its transformation documented.

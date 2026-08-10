@@ -5,6 +5,9 @@ transitions, and light-impact events with RTC timestamps. Records are stored in
 W25Q64 Flash and can be inspected through serial commands or a JDY-16 BLE
 dashboard.
 
+This repository documents the completed breadboard prototype. It does not
+claim enclosure or real-transport validation.
+
 <p align="center">
   <img src="docs/evidence/images/2026-08-08-breadboard-battery-prototype.jpg" width="48%" alt="Battery-powered STM32 breadboard prototype">
   <img src="docs/evidence/images/2026-08-08-mobile-dashboard-live.jpg" width="27%" alt="Live iPhone BLE dashboard">
@@ -88,5 +91,5 @@ Build and test commands are in [docs/build-and-test.md](docs/build-and-test.md).
 
 This is a breadboard prototype, not a calibrated instrument or a commercial
 transport monitor. Battery endurance, RTC retention during a documented power
-off interval, enclosure-level calibration, and real transport trials remain
-untested.
+off interval, enclosure-level calibration, and real transport trials were not
+evaluated in this project.
