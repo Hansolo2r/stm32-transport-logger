@@ -1,8 +1,17 @@
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
 const { pathToFileURL } = require("node:url");
 const { chromium } = require("playwright");
+
+const screenshotDirectory = path.join(os.tmpdir(), "stm32-transport-logger-tests");
+fs.mkdirSync(screenshotDirectory, { recursive: true });
+
+function screenshotPath(filename) {
+  return path.join(screenshotDirectory, filename);
+}
 
 async function openDashboard(viewport) {
   const browser = await chromium.launch({
@@ -67,7 +76,7 @@ test("sends phone time as BLE-safe chunks and keeps the dashboard responsive", a
     assert.equal(await page.locator("#syncTimeButton").isEnabled(), true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
     assert.deepEqual(errors, []);
-    await page.screenshot({ path: path.join(__dirname, "..", "..", "..", "..", "time-sync-mobile.png"), fullPage: true });
+    await page.screenshot({ path: screenshotPath("time-sync-mobile.png"), fullPage: true });
   } finally {
     await browser.close();
   }
@@ -79,7 +88,7 @@ test("shows the time-sync control without overflow on desktop", async () => {
     assert.equal(await page.locator("#syncTimeButton").isVisible(), true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
     assert.deepEqual(errors, []);
-    await page.screenshot({ path: path.join(__dirname, "..", "..", "..", "..", "time-sync-desktop.png"), fullPage: true });
+    await page.screenshot({ path: screenshotPath("time-sync-desktop.png"), fullPage: true });
   } finally {
     await browser.close();
   }
@@ -108,7 +117,7 @@ test("reads and saves the maximum shock duration", async () => {
     await page.waitForTimeout(1600);
     assert.equal(await page.locator("#toast").isHidden(), true);
     await page.screenshot({
-      path: path.join(__dirname, "..", "..", "..", "..", "motion-shock-config-mobile.png"),
+      path: screenshotPath("motion-shock-config-mobile.png"),
       fullPage: true
     });
   } finally {
